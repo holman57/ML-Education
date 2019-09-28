@@ -1,9 +1,7 @@
 package com.hiteshsahu.stt_tts.demo
-
 import android.app.Activity
 import android.content.Intent
 import java.util.*
-
 import android.view.animation.AlphaAnimation
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
@@ -11,6 +9,8 @@ import android.support.constraint.ConstraintLayout
 import android.widget.TextView
 import android.view.View
 import android.widget.Button
+import com.hiteshsahu.stt_tts.translation_engine.ConversionCallback
+import com.hiteshsahu.stt_tts.translation_engine.TranslatorFactory
 
 
 class HomeActivity : BasePermissionActivity() {
@@ -47,10 +47,13 @@ class HomeActivity : BasePermissionActivity() {
 
         initText.startAnimation(fadeIn)
 
+        say("Hello")
+
         val helloButton = findViewById<Button>(com.hiteshsahu.stt_tts.R.id.HelloButton)
         val leftButton = findViewById<Button>(com.hiteshsahu.stt_tts.R.id.LeftButton)
         val centerButton = findViewById<Button>(com.hiteshsahu.stt_tts.R.id.CenterButton)
         val rightButton = findViewById<Button>(com.hiteshsahu.stt_tts.R.id.RightButton)
+
         helloButton.visibility = View.VISIBLE
         helloButton.setOnClickListener {
             initText.startAnimation(fadeOut)
@@ -58,9 +61,26 @@ class HomeActivity : BasePermissionActivity() {
             leftButton.visibility = View.VISIBLE
             centerButton.visibility = View.VISIBLE
             rightButton.visibility = View.VISIBLE
+
+            say("Hey! Thanks for clicking on me.")
+            say("It makes me feel special")
         }
     }
 
+    private fun say(stringToSpeak: String) {
+        if (stringToSpeak.isNotEmpty()) {
+            TranslatorFactory
+                    .instance
+                    .with(TranslatorFactory.TRANSLATORS.TEXT_TO_SPEECH,
+                            object : ConversionCallback {
+                                override fun onSuccess(result: String) {}
+                                override fun onCompletion() {}
+                                override fun onErrorOccurred(errorMessage: String) {
+                                    //   erroConsole.text = "Text2Speech Error: $errorMessage"
+                                }
+                            })
+                    .initialize(stringToSpeak, this)}
+    }
 
     fun findString(listOfPossibleMatches: ArrayList<String>?, stringToMatch: String): Boolean {
         if (null != listOfPossibleMatches) {
@@ -79,6 +99,7 @@ class HomeActivity : BasePermissionActivity() {
         shareIntent.putExtra(Intent.EXTRA_TEXT, messageToShare)
         activity.startActivity(Intent.createChooser(shareIntent, "Share using"))
     }
+
 
 
 }
