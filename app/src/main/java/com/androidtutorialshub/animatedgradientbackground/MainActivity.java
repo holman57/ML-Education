@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        assert getSupportActionBar() != null;
         getSupportActionBar().hide();
 
         constraintLayout = (ConstraintLayout) findViewById(R.id.constraintLayout);
@@ -35,21 +36,21 @@ public class MainActivity extends AppCompatActivity {
         final TextView InitText = (TextView) findViewById(R.id.InitText);
         fadeIn.setDuration(1200);
         fadeIn.setFillAfter(true);
+        fadeOut.setStartOffset(1000);
+
+        fadeOut.setDuration(1200);
+        fadeOut.setFillAfter(true);
+        fadeOut.setStartOffset(10);
+
         InitText.startAnimation(fadeIn);
-
-
 
         final Button HelloButton = (Button) findViewById(R.id.HelloButton);
         HelloButton.setVisibility(View.VISIBLE);
         HelloButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HelloButton.setVisibility(View.GONE);
-              //  stopButton.setVisibility(View.VISIBLE);
                 InitText.startAnimation(fadeOut);
-                fadeOut.setDuration(1200);
-                fadeOut.setFillAfter(true);
-                fadeOut.setStartOffset(1000);
+                HelloButton.startAnimation(fadeOut);
             }
         });
 
