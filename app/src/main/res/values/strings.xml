@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Animated Gradient Background</string>
+    <string name="text_logo">Hello</string>
+    <string name="text_hint_email"></string>
+    <string name="text_hint_password"></string>
+    <string name="text_login">Hello</string>
+</resources>
