@@ -54,7 +54,7 @@
         <Button
             android:id="@+id/HelloButton"
             style="@android:style/Widget.Material.Light.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="121dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
@@ -64,6 +64,48 @@
             android:text="@string/text_login"
             android:textColor="#FFFFFF" />
 
+        <Button
+            android:id="@+id/LeftButton"
+            style="@android:style/Widget.Material.Light.Button"
+            android:layout_width="122dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape"
+            android:visibility="gone"
+            android:fadingEdge="horizontal|vertical"
+            android:keepScreenOn="false"
+            android:text="@string/text_empty"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/CenterButton"
+            style="@android:style/Widget.Material.Light.Button"
+            android:layout_width="121dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginTop="-48dp"
+            android:background="@drawable/shape"
+            android:fadingEdge="horizontal|vertical"
+            android:text="@string/text_empty"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/RightButton"
+            style="@android:style/Widget.Material.Light.Button"
+            android:layout_width="121dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_marginTop="-48dp"
+            android:visibility="gone"
+            android:background="@drawable/shape"
+            android:fadingEdge="horizontal|vertical"
+            android:text="@string/text_empty"
+            android:textColor="#FFFFFF" />
+
+
+
+
     </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

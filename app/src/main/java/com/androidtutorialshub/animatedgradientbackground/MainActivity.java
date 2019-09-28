@@ -45,18 +45,26 @@ public class MainActivity extends AppCompatActivity {
         InitText.startAnimation(fadeIn);
 
         final Button HelloButton = (Button) findViewById(R.id.HelloButton);
+        final Button LeftButton = (Button) findViewById(R.id.LeftButton);
+        final Button CenterButton = (Button) findViewById(R.id.CenterButton);
+        final Button RightButton = (Button) findViewById(R.id.RightButton);
         HelloButton.setVisibility(View.VISIBLE);
         HelloButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 InitText.startAnimation(fadeOut);
                 HelloButton.startAnimation(fadeOut);
+                LeftButton.setVisibility(View.VISIBLE);
+                CenterButton.setVisibility(View.VISIBLE);
+                RightButton.setVisibility(View.VISIBLE);
             }
         });
 
     }
 
+    public void displayCard() {
 
+    }
 
     @Override
     protected void onResume() {
