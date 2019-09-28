@@ -5,8 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/drawable_gradient_animation_list"
-    tools:context="com.androidtutorialshub.animatedgradientbackground.MainActivity">
+    android:background="@drawable/drawable_gradient_animation_list">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,7 +52,7 @@
 
         <Button
             android:id="@+id/HelloButton"
-            style="@android:style/Widget.Material.Light.Button"
+
             android:layout_width="121dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -66,7 +65,7 @@
 
         <Button
             android:id="@+id/LeftButton"
-            style="@android:style/Widget.Material.Light.Button"
+
             android:layout_width="122dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"
@@ -78,7 +77,7 @@
 
         <Button
             android:id="@+id/CenterButton"
-            style="@android:style/Widget.Material.Light.Button"
+
             android:layout_width="121dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -91,7 +90,7 @@
 
         <Button
             android:id="@+id/RightButton"
-            style="@android:style/Widget.Material.Light.Button"
+
             android:layout_width="121dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"

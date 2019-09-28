@@ -8,14 +8,13 @@
   ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">ML Education</string>
-    <string name="action_settings">Settings</string>
-    <string name="speech_to_text">Speech to Text</string>
-    <string name="speech_to_text_output">Speech to Text Output:</string>
-    <string name="text_logo">Hello</string>
-    <string name="text_hint_email">…</string>
-    <string name="text_hint_password">…</string>
-    <string name="text_login">Hello</string>
-    <string name="text_empty">…</string>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.hiteshsahu.stt_tts.demo.HomeActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>
