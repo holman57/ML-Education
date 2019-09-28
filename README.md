@@ -1,5 +1,9 @@
 # ML Education
 
+hiteshsahu/Android-TTS-STT
+
+One line solution for Android Text to speech(TTS) & Speech to Text(STT) translation problem https://github.com/hiteshsahu/Android-TTS-STT.git
+
 animated-gradient-background-tutorial
 Gradient Background
 
