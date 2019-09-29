@@ -17,6 +17,12 @@ import android.os.CountDownTimer
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import kotlinx.android.synthetic.main.activity_home.*
+import android.support.v4.app.SupportActivity
+import android.support.v4.app.SupportActivity.ExtraData
+import android.support.v4.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 class HomeActivity : BasePermissionActivity() {
@@ -69,111 +75,119 @@ class HomeActivity : BasePermissionActivity() {
             initText.startAnimation(fadeOut)
             helloButton.startAnimation(fadeOut)
 
-            displayText.startAnimation(fadeIn)
+        //    three_phase_failure(displayText, emphasisText, initText, helloButton, speechToText)
             displayText.visibility = View.VISIBLE
-            displayText.text = "This is the letter a"
-            say("This is the letter. A")
+            displayText.startAnimation(fadeIn)
+            val random = Random().nextInt(26) + 97
+
+            displayText.text = "This is the letter " + random.toChar() + "."
+            say("This is the letter. " + random.toChar().toUpperCase() + ".")
 
             emphasisText.startAnimation(fadeIn)
             emphasisText.textSize = 90.0F
             emphasisText.visibility = View.VISIBLE
-            emphasisText.text = "A a"
-
-            initText.visibility = View.GONE
-            helloButton.visibility = View.GONE
-
-            object : CountDownTimer(4000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {}
-                @SuppressLint("RestrictedApi")
-                override fun onFinish() {
-                    initText.visibility = View.GONE
-                    emphasisText.startAnimation(fadeIn)
-                    displayText.startAnimation(fadeIn)
-                    emphasisText.visibility = View.VISIBLE
-                    emphasisText.text = "A a"
-                    display(displayText, "What letter is this?")
-                    speechToText.visibility = View.VISIBLE
-
-                    speechToText.setOnClickListener { view ->
-                        TranslatorFactory.instance.with(TranslatorFactory.TRANSLATORS.SPEECH_TO_TEXT,
-                                object : ConversionCallback {
-                                    override fun onSuccess(result: String) {
-                                        emphasisText.visibility = View.GONE
-                                        speechToText.visibility = View.GONE
-                                        emphasisText.text = ""
-                                        displayText.startAnimation(fadeIn)
-                                        display(displayText, "Good Job!")
-                                        Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                                    }
-                                    override fun onCompletion() {}
-                                    override fun onErrorOccurred(errorMessage: String) {
-                                        emphasisText.visibility = View.GONE
-                                        speechToText.visibility = View.GONE
-                                        emphasisText.text = ""
-                                        displayText.startAnimation(fadeIn)
-                                        display(displayText, "Try Again.")
-                                        object : CountDownTimer(2000, 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {}
-                                            override fun onFinish() {
-                                                emphasisText.visibility = View.VISIBLE
-                                                speechToText.visibility = View.VISIBLE
-                                                speechToText.startAnimation(fadeIn)
-                                                displayText.startAnimation(fadeIn)
-                                                emphasisText.startAnimation(fadeIn)
-                                                emphasisText.text = "A a"
-                                                display(displayText, "What letter is this?")
-                                            }
-                                        }.start()
-                                    }
-                                }).initialize("", this@HomeActivity)
-                    }
-                }
-            }.start()
-
+            emphasisText.text = random.toChar().toUpperCase() + " " + random.toChar()
 
         }
     }
 
-    private fun display(textView: TextView, stringToSpeak: String) {
-        textView.text = stringToSpeak
-        say(stringToSpeak)
+
+
+
+
+    private fun generateLetter(displayText: TextView) {
+        displayText.visibility = View.VISIBLE
+        displayText.startAnimation(fadeIn)
+        displayText.text = "This is the letter "
+        say("This is the letter. ")
     }
 
-    private fun say(stringToSpeak: String) {
-        if (stringToSpeak.isNotEmpty()) {
-            TranslatorFactory
-                    .instance
-                    .with(TranslatorFactory.TRANSLATORS.TEXT_TO_SPEECH,
+    private fun three_phase_failure(displayText: TextView, emphasisText: TextView, initText: TextView, helloButton: Button, speechToText: FloatingActionButton) {
+        displayText.visibility = View.VISIBLE
+        displayText.startAnimation(fadeIn)
+        displayText.text = "This is the letter a"
+        say("This is the letter. A")
+
+        emphasisText.startAnimation(fadeIn)
+        emphasisText.textSize = 90.0F
+        emphasisText.visibility = View.VISIBLE
+        emphasisText.text = "A a"
+
+        initText.visibility = View.GONE
+        helloButton.visibility = View.GONE
+
+        object : CountDownTimer(4000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {}
+            @SuppressLint("RestrictedApi")
+            override fun onFinish() {
+                initText.visibility = View.GONE
+                emphasisText.startAnimation(fadeIn)
+                displayText.startAnimation(fadeIn)
+                emphasisText.visibility = View.VISIBLE
+                emphasisText.text = "A a"
+                display(displayText, "What letter is this?")
+                speechToText.visibility = View.VISIBLE
+
+                speechToText.setOnClickListener { view ->
+                    TranslatorFactory.instance.with(TranslatorFactory.TRANSLATORS.SPEECH_TO_TEXT,
                             object : ConversionCallback {
-                                override fun onSuccess(result: String) {}
+                                override fun onSuccess(result: String) {
+                                    emphasisText.visibility = View.GONE
+                                    speechToText.visibility = View.GONE
+                                    emphasisText.text = ""
+                                    displayText.startAnimation(fadeIn)
+                                    display(displayText, "Good Job!")
+                                    Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                                }
+
                                 override fun onCompletion() {}
                                 override fun onErrorOccurred(errorMessage: String) {
-                                    //   erroConsole.text = "Text2Speech Error: $errorMessage"
+                                    emphasisText.visibility = View.GONE
+                                    speechToText.visibility = View.GONE
+                                    emphasisText.text = ""
+                                    displayText.startAnimation(fadeIn)
+                                    display(displayText, "Try Again.")
+                                    object : CountDownTimer(2000, 1000) {
+                                        override fun onTick(millisUntilFinished: Long) {}
+                                        override fun onFinish() {
+                                            emphasisText.visibility = View.VISIBLE
+                                            speechToText.visibility = View.VISIBLE
+                                            speechToText.startAnimation(fadeIn)
+                                            displayText.startAnimation(fadeIn)
+                                            emphasisText.startAnimation(fadeIn)
+                                            emphasisText.text = "A a"
+                                            display(displayText, "What letter is this?")
+                                        }
+                                    }.start()
                                 }
-                            })
-                    .initialize(stringToSpeak, this)
-        }
-    }
-
-    fun findString(listOfPossibleMatches: ArrayList<String>?, stringToMatch: String): Boolean {
-        if (null != listOfPossibleMatches) {
-            for (transaltion in listOfPossibleMatches) {
-                if (transaltion.contains(stringToMatch)) {
-                    return true
+                            }).initialize("", this@HomeActivity)
                 }
             }
+        }.start()
+    }
+
+
+
+        private fun display(textView: TextView, stringToSpeak: String) {
+            textView.text = stringToSpeak
+            say(stringToSpeak)
         }
-        return false
-    }
 
-    fun share(messageToShare: String, activity: Activity) {
-        val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.type = "text/plain"
-        shareIntent.putExtra(Intent.EXTRA_TEXT, messageToShare)
-        activity.startActivity(Intent.createChooser(shareIntent, "Share using"))
-    }
-
-
+        private fun say(stringToSpeak: String) {
+            if (stringToSpeak.isNotEmpty()) {
+                TranslatorFactory
+                        .instance
+                        .with(TranslatorFactory.TRANSLATORS.TEXT_TO_SPEECH,
+                                object : ConversionCallback {
+                                    override fun onSuccess(result: String) {}
+                                    override fun onCompletion() {}
+                                    override fun onErrorOccurred(errorMessage: String) {
+                                        //   erroConsole.text = "Text2Speech Error: $errorMessage"
+                                    }
+                                })
+                        .initialize(stringToSpeak, this)
+            }
+        }
 }
 
 
