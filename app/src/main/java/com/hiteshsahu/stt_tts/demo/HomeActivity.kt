@@ -1,4 +1,5 @@
 package com.hiteshsahu.stt_tts.demo
+
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -79,8 +80,9 @@ class HomeActivity : BasePermissionActivity() {
             emphasisText.text = "A a"
 
             initText.visibility = View.GONE
+            helloButton.visibility = View.GONE
 
-            object : CountDownTimer(5000, 1000) {
+            object : CountDownTimer(4000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {}
                 @SuppressLint("RestrictedApi")
                 override fun onFinish() {
@@ -89,31 +91,44 @@ class HomeActivity : BasePermissionActivity() {
                     displayText.startAnimation(fadeIn)
                     emphasisText.visibility = View.VISIBLE
                     emphasisText.text = "A a"
-                    display(displayText,"What letter is this?")
-
+                    display(displayText, "What letter is this?")
                     speechToText.visibility = View.VISIBLE
 
                     speechToText.setOnClickListener { view ->
-                        Snackbar.make(view, "Speak now, App is listening", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show()
-                        TranslatorFactory
-                                .instance
-                                .with(TranslatorFactory.TRANSLATORS.SPEECH_TO_TEXT,
-                                        object : ConversionCallback {
-                                            override fun onSuccess(result: String) {
-                                            //    sttOutput.text = result
+                        TranslatorFactory.instance.with(TranslatorFactory.TRANSLATORS.SPEECH_TO_TEXT,
+                                object : ConversionCallback {
+                                    override fun onSuccess(result: String) {
+                                        emphasisText.visibility = View.GONE
+                                        speechToText.visibility = View.GONE
+                                        emphasisText.text = ""
+                                        displayText.startAnimation(fadeIn)
+                                        display(displayText, "Good Job!")
+                                        Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                                    }
+                                    override fun onCompletion() {}
+                                    override fun onErrorOccurred(errorMessage: String) {
+                                        emphasisText.visibility = View.GONE
+                                        speechToText.visibility = View.GONE
+                                        emphasisText.text = ""
+                                        displayText.startAnimation(fadeIn)
+                                        display(displayText, "Try Again.")
+                                        object : CountDownTimer(2000, 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {}
+                                            override fun onFinish() {
+                                                emphasisText.visibility = View.VISIBLE
+                                                speechToText.visibility = View.VISIBLE
+                                                speechToText.startAnimation(fadeIn)
+                                                displayText.startAnimation(fadeIn)
+                                                emphasisText.startAnimation(fadeIn)
+                                                emphasisText.text = "A a"
+                                                display(displayText, "What letter is this?")
                                             }
-                                            override fun onCompletion() {
-                                            }
-                                            override fun onErrorOccurred(errorMessage: String) {
-                                            }
-                                        }).initialize("Speak Now !!", this@HomeActivity)
+                                        }.start()
+                                    }
+                                }).initialize("", this@HomeActivity)
                     }
-
-
                 }
             }.start()
-
 
 
         }
@@ -136,7 +151,8 @@ class HomeActivity : BasePermissionActivity() {
                                     //   erroConsole.text = "Text2Speech Error: $errorMessage"
                                 }
                             })
-                    .initialize(stringToSpeak, this)}
+                    .initialize(stringToSpeak, this)
+        }
     }
 
     fun findString(listOfPossibleMatches: ArrayList<String>?, stringToMatch: String): Boolean {
@@ -156,7 +172,6 @@ class HomeActivity : BasePermissionActivity() {
         shareIntent.putExtra(Intent.EXTRA_TEXT, messageToShare)
         activity.startActivity(Intent.createChooser(shareIntent, "Share using"))
     }
-
 
 
 }
