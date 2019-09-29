@@ -11,6 +11,6 @@ Animated Gradient Background in Android :-  http://www.androidtutorialshub.com/a
 
 ![Life-cycle Diagram](https://raw.githubusercontent.com/holman57/MLeducation/master/Life-cycle%20Diagram.png)
 
-![Language Use-Cases](https://raw.githubusercontent.com/holman57/MLeducation/master/Language%20Wireframe.png)
+![Language Use-Cases](https://raw.githubusercontent.com/holman57/MLeducation/master/Language-Use-Cases.png)
 
-![Mathematics Use-Cases](https://raw.githubusercontent.com/holman57/MLeducation/master/Math%20Wireframe.png)
+![Mathematics Use-Cases](https://raw.githubusercontent.com/holman57/MLeducation/master/Math-Use-Cases.png)
