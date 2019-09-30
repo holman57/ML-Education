@@ -1,8 +1,6 @@
 package com.hiteshsahu.stt_tts.demo
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import java.util.*
 import android.view.animation.AlphaAnimation
 import android.graphics.drawable.AnimationDrawable
@@ -16,13 +14,6 @@ import com.hiteshsahu.stt_tts.translation_engine.TranslatorFactory
 import android.os.CountDownTimer
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
-import kotlinx.android.synthetic.main.activity_home.*
-import android.support.v4.app.SupportActivity
-import android.support.v4.app.SupportActivity.ExtraData
-import android.support.v4.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
 
 
 class HomeActivity : BasePermissionActivity() {
@@ -72,36 +63,167 @@ class HomeActivity : BasePermissionActivity() {
 
         helloButton.visibility = View.VISIBLE
         helloButton.setOnClickListener {
-            initText.startAnimation(fadeOut)
-            helloButton.startAnimation(fadeOut)
-
-        //    three_phase_failure(displayText, emphasisText, initText, helloButton, speechToText)
             displayText.visibility = View.VISIBLE
-            displayText.startAnimation(fadeIn)
-            val random = Random().nextInt(26) + 97
+            initText.text = ""
+            helloButton.text = ""
+            helloButton.visibility = View.GONE
+            initText.visibility = View.GONE
 
-            displayText.text = "This is the letter " + random.toChar() + "."
-            say("This is the letter. " + random.toChar().toUpperCase() + ".")
-
-            emphasisText.startAnimation(fadeIn)
-            emphasisText.textSize = 90.0F
-            emphasisText.visibility = View.VISIBLE
-            emphasisText.text = random.toChar().toUpperCase() + " " + random.toChar()
+            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
 
         }
     }
 
+    private fun controller(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        leftButton.visibility = View.GONE
+        leftButton.text = ""
+        centerButton.visibility = View.GONE
+        centerButton.text = ""
+        rightButton.visibility = View.GONE
+        rightButton.text = ""
+        emphasisText.visibility = View.GONE
+        emphasisText.text = ""
+        displayText.visibility = View.GONE
+        displayText.text = ""
 
-
-
-
-    private fun generateLetter(displayText: TextView) {
-        displayText.visibility = View.VISIBLE
-        displayText.startAnimation(fadeIn)
-        displayText.text = "This is the letter "
-        say("This is the letter. ")
+        if(Random().nextInt(10) % 2 == 0) {
+            thisIsTheLetterTimeline(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText)
+        } else {
+            alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
+        }
     }
 
+
+    @SuppressLint("SetTextI18n")
+    private fun alphabet(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+
+        emphasisText.visibility = View.VISIBLE
+        emphasisText.textSize = 90.0F
+        emphasisText.startAnimation(fadeIn)
+
+        displayText.startAnimation(fadeIn)
+        displayText.visibility = View.VISIBLE
+
+        val randomLetter = Random().nextInt(23) + 97
+        var correctLetter = randomLetter
+
+        when (randomLetter) {
+            97 -> {
+                emphasisText.text = "__, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                display(displayText, "What letter goes in the blank?")
+            }
+            98 -> {
+                emphasisText.text = (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                display(displayText, "What letter goes in the blank?")
+            }
+            99 -> {
+                emphasisText.text = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar()
+                display(displayText, "What letter goes in the blank?")
+            }
+            in 100..119 -> {
+                emphasisText.text = randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar() + ", __ "
+                correctLetter = randomLetter + 4
+                display(displayText, "What letter comes next?")
+            }
+            120 -> {
+                emphasisText.text = (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                display(displayText, "What letter goes in the blank?")
+            }
+            121 -> {
+                emphasisText.text = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar()
+                display(displayText, "What letter goes in the blank?")
+            }
+            122 -> {
+                emphasisText.text = (randomLetter - 3).toChar() + ", " + (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __ "
+                display(displayText, "What letter comes next?")
+            }
+        }
+
+        val randomAnswer = Random().nextInt(3) + 1
+        var leftButtonLetter: Int
+        var centerButtonLetter: Int
+        var rightButtonLetter: Int
+
+        leftButtonLetter = if (randomAnswer == 1) {
+            correctLetter
+        } else {
+            shuffleLetter(correctLetter)
+        }
+        leftButton.visibility = View.VISIBLE
+        leftButton.startAnimation(fadeIn)
+        leftButton.text = leftButtonLetter.toChar().toString()
+        leftButton.textSize = 90.0F
+        leftButton.setOnClickListener {
+            if (randomAnswer == 1) {
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+        }
+
+        centerButtonLetter = if (randomAnswer == 2) {
+            correctLetter
+        } else {
+            shuffleLetter(correctLetter, leftButtonLetter)
+        }
+        centerButton.visibility = View.VISIBLE
+        centerButton.startAnimation(fadeIn)
+        centerButton.text = centerButtonLetter.toChar().toString()
+        centerButton.textSize = 90.0F
+        centerButton.setOnClickListener {
+            if (randomAnswer == 2) {
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+        }
+
+        rightButtonLetter = if (randomAnswer == 3) {
+            correctLetter
+        } else {
+            shuffleLetter(correctLetter, leftButtonLetter, centerButtonLetter)
+        }
+        rightButton.visibility = View.VISIBLE
+        rightButton.startAnimation(fadeIn)
+        rightButton.text = rightButtonLetter.toChar().toString()
+        rightButton.textSize = 90.0F
+        rightButton.setOnClickListener {
+            if (randomAnswer == 3) {
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+        }
+
+
+
+    }
+
+    private fun thisIsTheLetterTimeline(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        ThisIsTheLetter(displayText, emphasisText)
+
+        object : CountDownTimer(duration, interval) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                emphasisText.startAnimation(fadeOut)
+                displayText.startAnimation(fadeOut)
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+        }.start()
+    }
+
+
+    private fun ThisIsTheLetter(displayText: TextView, emphasisText: TextView) {
+        displayText.visibility = View.VISIBLE
+        emphasisText.visibility = View.VISIBLE
+
+        val random = Random().nextInt(26) + 97
+
+        displayText.startAnimation(fadeIn)
+        displayText.text = "This is the letter " + random.toChar() + "."
+        say("This is the letter. " + random.toChar().toUpperCase() + ".")
+
+        emphasisText.startAnimation(fadeIn)
+        emphasisText.textSize = 90.0F
+        emphasisText.text = random.toChar().toUpperCase() + " " + random.toChar()
+    }
+
+
+    //    three_phase_failure(displayText, emphasisText, initText, helloButton, speechToText)
     private fun three_phase_failure(displayText: TextView, emphasisText: TextView, initText: TextView, helloButton: Button, speechToText: FloatingActionButton) {
         displayText.visibility = View.VISIBLE
         displayText.startAnimation(fadeIn)
@@ -139,7 +261,6 @@ class HomeActivity : BasePermissionActivity() {
                                     display(displayText, "Good Job!")
                                     Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show()
                                 }
-
                                 override fun onCompletion() {}
                                 override fun onErrorOccurred(errorMessage: String) {
                                     emphasisText.visibility = View.GONE
@@ -188,6 +309,30 @@ class HomeActivity : BasePermissionActivity() {
                         .initialize(stringToSpeak, this)
             }
         }
+
+    private fun shuffleLetter(checkLetter: Int): Int {
+        var randomLetter = Random().nextInt(26) + 97
+        while(randomLetter == checkLetter) {
+            randomLetter = Random().nextInt(26) + 97
+        }
+        return randomLetter
+    }
+
+    private fun shuffleLetter(checkLetter1: Int, checkLetter2: Int): Int {
+        var randomLetter = Random().nextInt(26) + 97
+        while(randomLetter == checkLetter1 || randomLetter == checkLetter2) {
+            randomLetter = Random().nextInt(26) + 97
+        }
+        return randomLetter
+    }
+
+    private fun shuffleLetter(checkLetter1: Int, checkLetter2: Int, checkLetter3: Int): Int {
+        var randomLetter = Random().nextInt(26) + 97
+        while(randomLetter == checkLetter1 || randomLetter == checkLetter2 || randomLetter == checkLetter3) {
+            randomLetter = Random().nextInt(26) + 97
+        }
+        return randomLetter
+    }
 }
 
 
