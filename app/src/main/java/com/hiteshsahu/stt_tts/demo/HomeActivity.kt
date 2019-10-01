@@ -86,10 +86,81 @@ class HomeActivity : BasePermissionActivity() {
         displayText.visibility = View.GONE
         displayText.text = ""
 
-        if(Random().nextInt(10) % 2 == 0) {
-            thisIsTheLetterTimeline(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText)
+        //alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+        when (Random().nextInt(3) + 1) {
+            1 -> thisIsTheLetterTimeline(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText)
+            2 -> alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
+            3 -> arithmetic(leftButton, centerButton, rightButton, emphasisText, displayText)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun arithmetic(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        emphasisText.visibility = View.VISIBLE
+        emphasisText.textSize = 90.0F
+        emphasisText.startAnimation(fadeIn)
+
+        displayText.startAnimation(fadeIn)
+        displayText.visibility = View.VISIBLE
+
+        val firstRandomDigit = Random().nextInt(4) + 1
+        val secondRandomDigit = Random().nextInt(4) + 1
+
+        emphasisText.text = "$firstRandomDigit + $secondRandomDigit ="
+        say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
+        displayText.text = "Can you evaluate this expression?"
+
+        val correctAnswer = firstRandomDigit + secondRandomDigit
+
+        val randomAnswer = Random().nextInt(3) + 1
+        val leftButtonLabel: Int
+        val centerButtonLabel: Int
+        val rightButtonLabel: Int
+
+        leftButtonLabel = if (randomAnswer == 1) {
+            correctAnswer
         } else {
-            alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
+            shuffleDigit(correctAnswer)
+        }
+        leftButton.visibility = View.VISIBLE
+        leftButton.startAnimation(fadeIn)
+        leftButton.text = leftButtonLabel.toString()
+        leftButton.textSize = 90.0F
+        leftButton.setOnClickListener {
+            if (randomAnswer == 1) {
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+        }
+
+        centerButtonLabel = if (randomAnswer == 2) {
+            correctAnswer
+        } else {
+            shuffleDigit(correctAnswer, leftButtonLabel)
+        }
+        centerButton.visibility = View.VISIBLE
+        centerButton.startAnimation(fadeIn)
+        centerButton.text = centerButtonLabel.toString()
+        centerButton.textSize = 90.0F
+        centerButton.setOnClickListener {
+            if (randomAnswer == 2) {
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+        }
+
+        rightButtonLabel = if (randomAnswer == 3) {
+            correctAnswer
+        } else {
+            shuffleDigit(correctAnswer, leftButtonLabel, centerButtonLabel)
+        }
+        rightButton.visibility = View.VISIBLE
+        rightButton.startAnimation(fadeIn)
+        rightButton.text = rightButtonLabel.toString()
+        rightButton.textSize = 90.0F
+        rightButton.setOnClickListener {
+            if (randomAnswer == 3) {
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
         }
     }
 
@@ -104,7 +175,7 @@ class HomeActivity : BasePermissionActivity() {
         displayText.startAnimation(fadeIn)
         displayText.visibility = View.VISIBLE
 
-        val randomLetter = Random().nextInt(23) + 97
+        val randomLetter = Random().nextInt(25) + 97
         var correctLetter = randomLetter
 
         when (randomLetter) {
@@ -120,10 +191,14 @@ class HomeActivity : BasePermissionActivity() {
                 emphasisText.text = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar()
                 display(displayText, "What letter goes in the blank?")
             }
-            in 100..119 -> {
+            in 100..118 -> {
                 emphasisText.text = randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar() + ", __ "
                 correctLetter = randomLetter + 4
                 display(displayText, "What letter comes next?")
+            }
+            119 -> {
+                emphasisText.text = "__, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                display(displayText, "What letter goes in the blank?")
             }
             120 -> {
                 emphasisText.text = (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
@@ -140,9 +215,9 @@ class HomeActivity : BasePermissionActivity() {
         }
 
         val randomAnswer = Random().nextInt(3) + 1
-        var leftButtonLetter: Int
-        var centerButtonLetter: Int
-        var rightButtonLetter: Int
+        val leftButtonLetter: Int
+        val centerButtonLetter: Int
+        val rightButtonLetter: Int
 
         leftButtonLetter = if (randomAnswer == 1) {
             correctLetter
@@ -189,8 +264,6 @@ class HomeActivity : BasePermissionActivity() {
             }
         }
 
-
-
     }
 
     private fun thisIsTheLetterTimeline(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
@@ -222,8 +295,6 @@ class HomeActivity : BasePermissionActivity() {
         emphasisText.text = random.toChar().toUpperCase() + " " + random.toChar()
     }
 
-
-    //    three_phase_failure(displayText, emphasisText, initText, helloButton, speechToText)
     private fun three_phase_failure(displayText: TextView, emphasisText: TextView, initText: TextView, helloButton: Button, speechToText: FloatingActionButton) {
         displayText.visibility = View.VISIBLE
         displayText.startAnimation(fadeIn)
@@ -287,28 +358,26 @@ class HomeActivity : BasePermissionActivity() {
         }.start()
     }
 
+    private fun display(textView: TextView, stringToSpeak: String) {
+        textView.text = stringToSpeak
+        say(stringToSpeak)
+    }
 
-
-        private fun display(textView: TextView, stringToSpeak: String) {
-            textView.text = stringToSpeak
-            say(stringToSpeak)
+    private fun say(stringToSpeak: String) {
+        if (stringToSpeak.isNotEmpty()) {
+            TranslatorFactory
+                    .instance
+                    .with(TranslatorFactory.TRANSLATORS.TEXT_TO_SPEECH,
+                            object : ConversionCallback {
+                                override fun onSuccess(result: String) {}
+                                override fun onCompletion() {}
+                                override fun onErrorOccurred(errorMessage: String) {
+                                    //   erroConsole.text = "Text2Speech Error: $errorMessage"
+                                }
+                            })
+                    .initialize(stringToSpeak, this)
         }
-
-        private fun say(stringToSpeak: String) {
-            if (stringToSpeak.isNotEmpty()) {
-                TranslatorFactory
-                        .instance
-                        .with(TranslatorFactory.TRANSLATORS.TEXT_TO_SPEECH,
-                                object : ConversionCallback {
-                                    override fun onSuccess(result: String) {}
-                                    override fun onCompletion() {}
-                                    override fun onErrorOccurred(errorMessage: String) {
-                                        //   erroConsole.text = "Text2Speech Error: $errorMessage"
-                                    }
-                                })
-                        .initialize(stringToSpeak, this)
-            }
-        }
+    }
 
     private fun shuffleLetter(checkLetter: Int): Int {
         var randomLetter = Random().nextInt(26) + 97
@@ -332,6 +401,30 @@ class HomeActivity : BasePermissionActivity() {
             randomLetter = Random().nextInt(26) + 97
         }
         return randomLetter
+    }
+
+    private fun shuffleDigit(correctAnswer: Int): Int {
+        var randomDigit = Random().nextInt(8) + 1
+        while (correctAnswer == randomDigit) {
+            randomDigit = Random().nextInt(8) + 1
+        }
+        return randomDigit
+    }
+
+    private fun shuffleDigit(correctAnswer: Int, avoidDigit1: Int): Int {
+        var randomDigit = Random().nextInt(8) + 1
+        while (correctAnswer == randomDigit || avoidDigit1 == randomDigit) {
+            randomDigit = Random().nextInt(8) + 1
+        }
+        return randomDigit
+    }
+
+    private fun shuffleDigit(correctAnswer: Int, avoidDigit1: Int, avoidDigit2: Int): Int {
+        var randomDigit = Random().nextInt(8) + 1
+        while (correctAnswer == randomDigit || avoidDigit1 == randomDigit || avoidDigit2 == randomDigit) {
+            randomDigit = Random().nextInt(8) + 1
+        }
+        return randomDigit
     }
 }
 
