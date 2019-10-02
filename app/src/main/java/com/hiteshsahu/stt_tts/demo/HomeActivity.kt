@@ -21,6 +21,8 @@ class HomeActivity : BasePermissionActivity() {
     private var fadeIn = AlphaAnimation(0.0f, 1.0f)
     private var fadeOut = AlphaAnimation(1.0f, 0.0f)
 
+    val history: MutableList<String> = mutableListOf()
+
     override fun getActivityLayout(): Int {
         return com.hiteshsahu.stt_tts.R.layout.activity_home
     }
@@ -86,12 +88,11 @@ class HomeActivity : BasePermissionActivity() {
         displayText.visibility = View.GONE
         displayText.text = ""
 
-        //alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
 
-        when (Random().nextInt(3) + 1) {
-            1 -> thisIsTheLetterTimeline(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText)
-            2 -> alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
-            3 -> arithmetic(leftButton, centerButton, rightButton, emphasisText, displayText)
+        when (Random().nextInt(2) + 1) {
+            1 -> alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
+            2 -> arithmetic(leftButton, centerButton, rightButton, emphasisText, displayText)
+            3 -> thisIsTheLetterTimeline(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText)
         }
     }
 
