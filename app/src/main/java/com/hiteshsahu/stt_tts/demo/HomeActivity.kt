@@ -7,13 +7,16 @@ import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.widget.TextView
-import android.view.View
 import android.widget.Button
 import com.hiteshsahu.stt_tts.translation_engine.ConversionCallback
 import com.hiteshsahu.stt_tts.translation_engine.TranslatorFactory
 import android.os.CountDownTimer
+import android.support.constraint.solver.GoalRow
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import com.hiteshsahu.stt_tts.data_structures.History
 
 
 class HomeActivity : BasePermissionActivity() {
@@ -21,7 +24,7 @@ class HomeActivity : BasePermissionActivity() {
     private var fadeIn = AlphaAnimation(0.0f, 1.0f)
     private var fadeOut = AlphaAnimation(1.0f, 0.0f)
 
-    val history: MutableList<String> = mutableListOf()
+    private val history = History()
 
     override fun getActivityLayout(): Int {
         return com.hiteshsahu.stt_tts.R.layout.activity_home
@@ -63,54 +66,91 @@ class HomeActivity : BasePermissionActivity() {
         val centerButton = findViewById<Button>(com.hiteshsahu.stt_tts.R.id.CenterButton)
         val rightButton = findViewById<Button>(com.hiteshsahu.stt_tts.R.id.RightButton)
 
-        helloButton.visibility = View.VISIBLE
+        helloButton.visibility = VISIBLE
         helloButton.setOnClickListener {
-            displayText.visibility = View.VISIBLE
+            displayText.visibility = VISIBLE
             initText.text = ""
             helloButton.text = ""
-            helloButton.visibility = View.GONE
-            initText.visibility = View.GONE
+            helloButton.visibility = GONE
+            initText.visibility = GONE
 
             controller(leftButton, centerButton, rightButton, emphasisText, displayText)
 
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun controller(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
-        leftButton.visibility = View.GONE
-        leftButton.text = ""
-        centerButton.visibility = View.GONE
-        centerButton.text = ""
-        rightButton.visibility = View.GONE
-        rightButton.text = ""
-        emphasisText.visibility = View.GONE
-        emphasisText.text = ""
-        displayText.visibility = View.GONE
-        displayText.text = ""
 
+        println(history.print())
 
-        when (Random().nextInt(2) + 1) {
-            1 -> alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
-            2 -> arithmetic(leftButton, centerButton, rightButton, emphasisText, displayText)
-            3 -> thisIsTheLetterTimeline(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText)
+        clearView(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+        when (Random().nextInt(3) + 1) {
+            1 -> {
+                alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+            2 -> {
+                var randomLetter = Random().nextInt(26) + 97
+                var noRepeat = 0
+                val letter = randomLetter.toChar()
+                while (!history.contain("letter","$letter") && noRepeat < 26) {
+                    randomLetter = Random().nextInt(26) + 97
+                    noRepeat += 1
+                }
+
+                thisIsTheLetterTimeline(2500, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, randomLetter)
+            }
+            3 -> {
+                val firstRandomDigit = Random().nextInt(4) + 1
+                val secondRandomDigit = Random().nextInt(4) + 1
+
+                emphasisText.text = "$firstRandomDigit + $secondRandomDigit ="
+
+                if (!history.contain("title","addition 1..9")) {
+                    say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
+                    displayText.text = "Can you evaluate this expression?"
+                    displayText.startAnimation(fadeIn)
+                    displayText.visibility = VISIBLE
+                }
+                else {
+                    say("$firstRandomDigit + $secondRandomDigit")
+                    displayText.text = ""
+                    displayText.visibility = GONE
+                }
+
+                arithmetic(leftButton, centerButton, rightButton, emphasisText, displayText, firstRandomDigit, secondRandomDigit)
+            }
+
         }
     }
 
+    private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+        emphasisText.visibility = GONE
+        displayText.visibility = GONE
+
+        leftButton.text = ""
+        centerButton.text = ""
+        rightButton.text = ""
+        emphasisText.text = ""
+        displayText.text = ""
+    }
+
     @SuppressLint("SetTextI18n")
-    private fun arithmetic(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
-        emphasisText.visibility = View.VISIBLE
-        emphasisText.textSize = 90.0F
+    private fun arithmetic(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, firstRandomDigit: Int, secondRandomDigit: Int) {
+        history.startCard("title","addition 1..9")
+        history.add("type","arithmetic")
+
+        leftButton.alpha = 1F
+        centerButton.alpha = 1F
+        rightButton.alpha = 1F
+
+        emphasisText.visibility = VISIBLE
         emphasisText.startAnimation(fadeIn)
-
-        displayText.startAnimation(fadeIn)
-        displayText.visibility = View.VISIBLE
-
-        val firstRandomDigit = Random().nextInt(4) + 1
-        val secondRandomDigit = Random().nextInt(4) + 1
-
-        emphasisText.text = "$firstRandomDigit + $secondRandomDigit ="
-        say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
-        displayText.text = "Can you evaluate this expression?"
+        emphasisText.textSize = 90.0F
 
         val correctAnswer = firstRandomDigit + secondRandomDigit
 
@@ -124,12 +164,13 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleDigit(correctAnswer)
         }
-        leftButton.visibility = View.VISIBLE
+        leftButton.visibility = VISIBLE
         leftButton.startAnimation(fadeIn)
         leftButton.text = leftButtonLabel.toString()
         leftButton.textSize = 90.0F
         leftButton.setOnClickListener {
             if (randomAnswer == 1) {
+                history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }
@@ -139,12 +180,13 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleDigit(correctAnswer, leftButtonLabel)
         }
-        centerButton.visibility = View.VISIBLE
+        centerButton.visibility = VISIBLE
         centerButton.startAnimation(fadeIn)
         centerButton.text = centerButtonLabel.toString()
         centerButton.textSize = 90.0F
         centerButton.setOnClickListener {
             if (randomAnswer == 2) {
+                history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }
@@ -154,12 +196,13 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleDigit(correctAnswer, leftButtonLabel, centerButtonLabel)
         }
-        rightButton.visibility = View.VISIBLE
+        rightButton.visibility = VISIBLE
         rightButton.startAnimation(fadeIn)
         rightButton.text = rightButtonLabel.toString()
         rightButton.textSize = 90.0F
         rightButton.setOnClickListener {
             if (randomAnswer == 3) {
+                history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }
@@ -168,16 +211,24 @@ class HomeActivity : BasePermissionActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun alphabet(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        history.startCard("title","alphabet sequence")
+        history.add("type","language")
 
-        emphasisText.visibility = View.VISIBLE
+        leftButton.alpha = 1F
+        centerButton.alpha = 1F
+        rightButton.alpha = 1F
+
+        emphasisText.visibility = VISIBLE
         emphasisText.textSize = 90.0F
         emphasisText.startAnimation(fadeIn)
 
         displayText.startAnimation(fadeIn)
-        displayText.visibility = View.VISIBLE
+        displayText.visibility = VISIBLE
 
         val randomLetter = Random().nextInt(25) + 97
         var correctLetter = randomLetter
+
+        history.add("starting letter","$randomLetter")
 
         when (randomLetter) {
             97 -> {
@@ -225,12 +276,13 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleLetter(correctLetter)
         }
-        leftButton.visibility = View.VISIBLE
+        leftButton.visibility = VISIBLE
         leftButton.startAnimation(fadeIn)
         leftButton.text = leftButtonLetter.toChar().toString()
         leftButton.textSize = 90.0F
         leftButton.setOnClickListener {
             if (randomAnswer == 1) {
+                history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }
@@ -240,12 +292,13 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleLetter(correctLetter, leftButtonLetter)
         }
-        centerButton.visibility = View.VISIBLE
+        centerButton.visibility = VISIBLE
         centerButton.startAnimation(fadeIn)
         centerButton.text = centerButtonLetter.toChar().toString()
         centerButton.textSize = 90.0F
         centerButton.setOnClickListener {
             if (randomAnswer == 2) {
+                history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }
@@ -255,79 +308,91 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleLetter(correctLetter, leftButtonLetter, centerButtonLetter)
         }
-        rightButton.visibility = View.VISIBLE
+        rightButton.visibility = VISIBLE
         rightButton.startAnimation(fadeIn)
         rightButton.text = rightButtonLetter.toChar().toString()
         rightButton.textSize = 90.0F
         rightButton.setOnClickListener {
             if (randomAnswer == 3) {
+                history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }
 
     }
 
-    private fun thisIsTheLetterTimeline(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
-        ThisIsTheLetter(displayText, emphasisText)
+    private fun thisIsTheLetterTimeline(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, randomLetter: Int) {
+        leftButton.alpha = 0.0F
+        centerButton.alpha = 0.0F
+        rightButton.alpha = 0.0F
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+
+        history.startCard("title","this is the letter")
+        history.add("type","language")
+        history.add("letter","$randomLetter")
+
+        thisIsTheLetter(displayText, emphasisText, randomLetter)
 
         object : CountDownTimer(duration, interval) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 emphasisText.startAnimation(fadeOut)
                 displayText.startAnimation(fadeOut)
+                history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }.start()
     }
 
 
-    private fun ThisIsTheLetter(displayText: TextView, emphasisText: TextView) {
-        displayText.visibility = View.VISIBLE
-        emphasisText.visibility = View.VISIBLE
-
-        val random = Random().nextInt(26) + 97
+    @SuppressLint("SetTextI18n")
+    private fun thisIsTheLetter(displayText: TextView, emphasisText: TextView, randomLetter: Int) {
+        displayText.visibility = VISIBLE
+        emphasisText.visibility = VISIBLE
 
         displayText.startAnimation(fadeIn)
-        displayText.text = "This is the letter " + random.toChar() + "."
-        say("This is the letter. " + random.toChar().toUpperCase() + ".")
+        displayText.text = "This is the letter " + randomLetter.toChar() + "."
+        say("This is the letter. " + randomLetter.toChar().toUpperCase() + ".")
 
         emphasisText.startAnimation(fadeIn)
         emphasisText.textSize = 90.0F
-        emphasisText.text = random.toChar().toUpperCase() + " " + random.toChar()
+        emphasisText.text = randomLetter.toChar().toUpperCase() + " " + randomLetter.toChar()
     }
 
     private fun three_phase_failure(displayText: TextView, emphasisText: TextView, initText: TextView, helloButton: Button, speechToText: FloatingActionButton) {
-        displayText.visibility = View.VISIBLE
+        displayText.visibility = VISIBLE
         displayText.startAnimation(fadeIn)
         displayText.text = "This is the letter a"
         say("This is the letter. A")
 
         emphasisText.startAnimation(fadeIn)
         emphasisText.textSize = 90.0F
-        emphasisText.visibility = View.VISIBLE
+        emphasisText.visibility = VISIBLE
         emphasisText.text = "A a"
 
-        initText.visibility = View.GONE
-        helloButton.visibility = View.GONE
+        initText.visibility = GONE
+        helloButton.visibility = GONE
 
         object : CountDownTimer(4000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             @SuppressLint("RestrictedApi")
             override fun onFinish() {
-                initText.visibility = View.GONE
+                initText.visibility = GONE
                 emphasisText.startAnimation(fadeIn)
                 displayText.startAnimation(fadeIn)
-                emphasisText.visibility = View.VISIBLE
+                emphasisText.visibility = VISIBLE
                 emphasisText.text = "A a"
                 display(displayText, "What letter is this?")
-                speechToText.visibility = View.VISIBLE
+                speechToText.visibility = VISIBLE
 
                 speechToText.setOnClickListener { view ->
                     TranslatorFactory.instance.with(TranslatorFactory.TRANSLATORS.SPEECH_TO_TEXT,
                             object : ConversionCallback {
                                 override fun onSuccess(result: String) {
-                                    emphasisText.visibility = View.GONE
-                                    speechToText.visibility = View.GONE
+                                    emphasisText.visibility = GONE
+                                    speechToText.visibility = GONE
                                     emphasisText.text = ""
                                     displayText.startAnimation(fadeIn)
                                     display(displayText, "Good Job!")
@@ -335,16 +400,16 @@ class HomeActivity : BasePermissionActivity() {
                                 }
                                 override fun onCompletion() {}
                                 override fun onErrorOccurred(errorMessage: String) {
-                                    emphasisText.visibility = View.GONE
-                                    speechToText.visibility = View.GONE
+                                    emphasisText.visibility = GONE
+                                    speechToText.visibility = GONE
                                     emphasisText.text = ""
                                     displayText.startAnimation(fadeIn)
                                     display(displayText, "Try Again.")
                                     object : CountDownTimer(2000, 1000) {
                                         override fun onTick(millisUntilFinished: Long) {}
                                         override fun onFinish() {
-                                            emphasisText.visibility = View.VISIBLE
-                                            speechToText.visibility = View.VISIBLE
+                                            emphasisText.visibility = VISIBLE
+                                            speechToText.visibility = VISIBLE
                                             speechToText.startAnimation(fadeIn)
                                             displayText.startAnimation(fadeIn)
                                             emphasisText.startAnimation(fadeIn)
@@ -428,5 +493,4 @@ class HomeActivity : BasePermissionActivity() {
         return randomDigit
     }
 }
-
 
