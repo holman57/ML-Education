@@ -12,7 +12,6 @@ import com.hiteshsahu.stt_tts.translation_engine.ConversionCallback
 import com.hiteshsahu.stt_tts.translation_engine.TranslatorFactory
 import android.os.CountDownTimer
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.hiteshsahu.stt_tts.chatbot.Response
@@ -148,10 +147,10 @@ class HomeActivity : BasePermissionActivity() {
     }
 
     private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView) {
-        leftButton.visibility = GONE
-        centerButton.visibility = GONE
-        rightButton.visibility = GONE
-        emphasisText.visibility = GONE
+        leftButton.startAnimation(fadeOut)
+        centerButton.startAnimation(fadeOut)
+        rightButton.startAnimation(fadeOut)
+        emphasisText.startAnimation(fadeOut)
 
         emphasisText.text = ""
 
@@ -165,6 +164,7 @@ class HomeActivity : BasePermissionActivity() {
     private fun arithmetic1_9(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, firstRandomDigit: Int, secondRandomDigit: Int) {
         history.startCard("title","addition 1..9")
         history.add("type","arithmetic1_9")
+        history.add("time", "${Calendar.getInstance().timeInMillis}")
 
         leftButton.alpha = 1F
         centerButton.alpha = 1F
@@ -237,6 +237,7 @@ class HomeActivity : BasePermissionActivity() {
     private fun alphabet(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
         history.startCard("title","alphabet sequence")
         history.add("type","language")
+        history.add("time", "${Calendar.getInstance().timeInMillis}")
 
         showButtonsEmphasisDisplayText(leftButton, centerButton, rightButton, emphasisText, displayText)
 
@@ -245,7 +246,7 @@ class HomeActivity : BasePermissionActivity() {
         var questionPhrase = ""
         var answerPhrase = ""
 
-        history.add("starting letter","$randomLetter")
+        history.add("starting letter","${randomLetter.toChar()}")
 
         when (randomLetter) {
             97 -> {
@@ -315,14 +316,15 @@ class HomeActivity : BasePermissionActivity() {
         leftButton.setOnClickListener {
             if (!answeredQuestionWrong) {
                 if (randomAnswer == 1) {
-                    if (controller.shouldEncourage(history)) {
+                    history.add("answered correctly", "true")
+                    if (controller.shouldEncourage(history, "alphabet sequence")) {
                         hideButtons(leftButton, centerButton, rightButton)
                         showTextView(displayText)
                         val encouragementPhrase = response.encourage()
                         history.add("response", encouragementPhrase)
                         display(displayText, encouragementPhrase)
                         emphasisText.text = answerPhrase
-                        object : CountDownTimer(3000, 1000) {
+                        object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
                                 history.endCard()
@@ -330,11 +332,12 @@ class HomeActivity : BasePermissionActivity() {
                             }
                         }.start()
                     } else {
-                            history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        history.endCard()
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
                 } else {
-                    if (controller.shouldTryAgain(history)) {
+                    history.add("answered incorrectly", "true")
+                    if (controller.shouldTryAgain(history, "alphabet sequence")) {
                         clearView(leftButton, centerButton, rightButton, emphasisText)
                         displayText.startAnimation(fadeIn)
                         val keepTryingPhrase = response.keepTrying()
@@ -362,13 +365,14 @@ class HomeActivity : BasePermissionActivity() {
                 }
             } else {
                 if (randomAnswer == 1) {
+                    history.add("answered correctly", "true")
                     hideButtons(leftButton, centerButton, rightButton)
                     showTextView(displayText)
                     val encouragementPhrase = response.encourage()
                     history.add("response", encouragementPhrase)
                     display(displayText, encouragementPhrase)
                     emphasisText.text = answerPhrase
-                    object : CountDownTimer(3000, 1000) {
+                    object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
                             history.endCard()
@@ -376,7 +380,8 @@ class HomeActivity : BasePermissionActivity() {
                         }
                     }.start()
                 } else {
-                    if (controller.shouldTryAgain(history)) {
+                    history.add("answered correctly", "false")
+                    if (controller.shouldTryAgain(history, "alphabet sequence")) {
                         clearView(leftButton, centerButton, rightButton, emphasisText)
                         displayText.startAnimation(fadeIn)
                         val keepTryingPhrase = response.keepTrying()
@@ -388,7 +393,7 @@ class HomeActivity : BasePermissionActivity() {
                                 showTextView(emphasisText)
                                 emphasisText.text = answerPhrase
                                 displayText.text = "This is the correct sequence of letters"
-                                say("This is the correct sequence of letters. " + answerPhrase)
+                                say("This is the correct sequence of letters. $answerPhrase")
                                 object : CountDownTimer(8000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
@@ -402,7 +407,7 @@ class HomeActivity : BasePermissionActivity() {
                         hideButtons(leftButton, centerButton, rightButton)
                         emphasisText.text = answerPhrase
                         displayText.text = "This is the correct sequence of letters"
-                        say("This is the correct sequence of letters. " + answerPhrase)
+                        say("This is the correct sequence of letters. $answerPhrase")
                         object : CountDownTimer(8000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
@@ -425,14 +430,15 @@ class HomeActivity : BasePermissionActivity() {
         centerButton.setOnClickListener {
             if (!answeredQuestionWrong) {
                 if (randomAnswer == 2) {
-                    if (controller.shouldEncourage(history)) {
+                    history.add("answered correctly", "true")
+                    if (controller.shouldEncourage(history, "alphabet sequence")) {
                         hideButtons(leftButton, centerButton, rightButton)
                         showTextView(displayText)
                         val encouragementPhrase = response.encourage()
                         history.add("response", encouragementPhrase)
                         display(displayText, encouragementPhrase)
                         emphasisText.text = answerPhrase
-                        object : CountDownTimer(3000, 1000) {
+                        object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
                                 history.endCard()
@@ -440,11 +446,12 @@ class HomeActivity : BasePermissionActivity() {
                             }
                         }.start()
                     } else {
-                            history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        history.endCard()
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
                 } else {
-                    if (controller.shouldTryAgain(history)) {
+                    history.add("answered incorrectly", "true")
+                    if (controller.shouldTryAgain(history, "alphabet sequence")) {
                         clearView(leftButton, centerButton, rightButton, emphasisText)
                         displayText.startAnimation(fadeIn)
                         val keepTryingPhrase = response.keepTrying()
@@ -472,13 +479,14 @@ class HomeActivity : BasePermissionActivity() {
                 }
             } else {
                 if (randomAnswer == 2) {
+                    history.add("answered correctly", "true")
                     hideButtons(leftButton, centerButton, rightButton)
                     showTextView(displayText)
                     val encouragementPhrase = response.encourage()
                     history.add("response", encouragementPhrase)
                     display(displayText, encouragementPhrase)
                     emphasisText.text = answerPhrase
-                    object : CountDownTimer(3000, 1000) {
+                    object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
                             history.endCard()
@@ -486,7 +494,8 @@ class HomeActivity : BasePermissionActivity() {
                         }
                     }.start()
                 } else {
-                    if (controller.shouldTryAgain(history)) {
+                    history.add("answered correctly", "false")
+                    if (controller.shouldTryAgain(history, "alphabet sequence")) {
                         clearView(leftButton, centerButton, rightButton, emphasisText)
                         displayText.startAnimation(fadeIn)
                         val keepTryingPhrase = response.keepTrying()
@@ -499,7 +508,7 @@ class HomeActivity : BasePermissionActivity() {
                                 showTextView(emphasisText)
                                 emphasisText.text = answerPhrase
                                 displayText.text = "This is the correct sequence of letters"
-                                say("This is the correct sequence of letters. " + answerPhrase)
+                                say("This is the correct sequence of letters. $answerPhrase")
                                 object : CountDownTimer(8000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
@@ -513,7 +522,7 @@ class HomeActivity : BasePermissionActivity() {
                         hideButtons(leftButton, centerButton, rightButton)
                         emphasisText.text = answerPhrase
                         displayText.text = "This is the correct sequence of letters"
-                        say("This is the correct sequence of letters. " + answerPhrase)
+                        say("This is the correct sequence of letters. $answerPhrase")
                         object : CountDownTimer(8000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
@@ -536,14 +545,15 @@ class HomeActivity : BasePermissionActivity() {
         rightButton.setOnClickListener {
             if (!answeredQuestionWrong) {
                 if (randomAnswer == 3) {
-                    if (controller.shouldEncourage(history)) {
+                    history.add("answered correctly", "true")
+                    if (controller.shouldEncourage(history, "alphabet sequence")) {
                         hideButtons(leftButton, centerButton, rightButton)
                         showTextView(displayText)
                         val encouragementPhrase = response.encourage()
                         history.add("response", encouragementPhrase)
                         display(displayText, encouragementPhrase)
                         emphasisText.text = answerPhrase
-                        object : CountDownTimer(3000, 1000) {
+                        object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
                                 history.endCard()
@@ -551,11 +561,12 @@ class HomeActivity : BasePermissionActivity() {
                             }
                         }.start()
                     } else {
-                            history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        history.endCard()
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
                 } else {
-                    if (controller.shouldTryAgain(history)) {
+                    history.add("answered incorrectly", "true")
+                    if (controller.shouldTryAgain(history, "alphabet sequence")) {
                         clearView(leftButton, centerButton, rightButton, emphasisText)
                         displayText.startAnimation(fadeIn)
                         val keepTryingPhrase = response.keepTrying()
@@ -583,13 +594,14 @@ class HomeActivity : BasePermissionActivity() {
                 }
             } else {
                 if (randomAnswer == 3) {
+                    history.add("answered correctly", "true")
                     hideButtons(leftButton, centerButton, rightButton)
                     showTextView(displayText)
                     val encouragementPhrase = response.encourage()
                     history.add("response", encouragementPhrase)
                     display(displayText, encouragementPhrase)
                     emphasisText.text = answerPhrase
-                    object : CountDownTimer(3000, 1000) {
+                    object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
                             history.endCard()
@@ -597,7 +609,8 @@ class HomeActivity : BasePermissionActivity() {
                         }
                     }.start()
                 } else {
-                    if (controller.shouldTryAgain(history)) {
+                    history.add("answered correctly", "false")
+                    if (controller.shouldTryAgain(history, "alphabet sequence")) {
                         clearView(leftButton, centerButton, rightButton, emphasisText)
                         displayText.startAnimation(fadeIn)
                         val keepTryingPhrase = response.keepTrying()
@@ -610,7 +623,7 @@ class HomeActivity : BasePermissionActivity() {
                                 showTextView(emphasisText)
                                 emphasisText.text = answerPhrase
                                 displayText.text = "This is the correct sequence of letters"
-                                say("This is the correct sequence of letters. " + answerPhrase)
+                                say("This is the correct sequence of letters. $answerPhrase")
                                 object : CountDownTimer(8000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
@@ -624,7 +637,7 @@ class HomeActivity : BasePermissionActivity() {
                         hideButtons(leftButton, centerButton, rightButton)
                         emphasisText.text = answerPhrase
                         displayText.text = "This is the correct sequence of letters"
-                        say("This is the correct sequence of letters. " + answerPhrase)
+                        say("This is the correct sequence of letters. $answerPhrase")
                         object : CountDownTimer(8000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
@@ -636,7 +649,6 @@ class HomeActivity : BasePermissionActivity() {
                 }
             }
         }
-
     }
 
     private fun hideTextView(textView: TextView) {
@@ -718,7 +730,8 @@ class HomeActivity : BasePermissionActivity() {
 
         history.startCard("title","this is the letter")
         history.add("type","language")
-        history.add("letter","$randomLetter")
+        history.add("time", "${Calendar.getInstance().timeInMillis}")
+        history.add("letter","${randomLetter.toChar()}")
 
         displayText.visibility = VISIBLE
         emphasisText.visibility = VISIBLE
@@ -738,69 +751,6 @@ class HomeActivity : BasePermissionActivity() {
                 displayText.startAnimation(fadeOut)
                 history.endCard()
                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
-            }
-        }.start()
-    }
-
-    private fun three_phase_failure(displayText: TextView, emphasisText: TextView, initText: TextView, helloButton: Button, speechToText: FloatingActionButton) {
-        displayText.visibility = VISIBLE
-        displayText.startAnimation(fadeIn)
-        displayText.text = "This is the letter a"
-        say("This is the letter. A")
-
-        emphasisText.startAnimation(fadeIn)
-        emphasisText.textSize = 90.0F
-        emphasisText.visibility = VISIBLE
-        emphasisText.text = "A a"
-
-        initText.visibility = GONE
-        helloButton.visibility = GONE
-
-        object : CountDownTimer(4000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {}
-            @SuppressLint("RestrictedApi")
-            override fun onFinish() {
-                initText.visibility = GONE
-                emphasisText.startAnimation(fadeIn)
-                displayText.startAnimation(fadeIn)
-                emphasisText.visibility = VISIBLE
-                emphasisText.text = "A a"
-                display(displayText, "What letter is this?")
-                speechToText.visibility = VISIBLE
-
-                speechToText.setOnClickListener { view ->
-                    TranslatorFactory.instance.with(TranslatorFactory.TRANSLATORS.SPEECH_TO_TEXT,
-                            object : ConversionCallback {
-                                override fun onSuccess(result: String) {
-                                    emphasisText.visibility = GONE
-                                    speechToText.visibility = GONE
-                                    emphasisText.text = ""
-                                    displayText.startAnimation(fadeIn)
-                                    display(displayText, "Good Job!")
-                                    Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                                }
-                                override fun onCompletion() {}
-                                override fun onErrorOccurred(errorMessage: String) {
-                                    emphasisText.visibility = GONE
-                                    speechToText.visibility = GONE
-                                    emphasisText.text = ""
-                                    displayText.startAnimation(fadeIn)
-                                    display(displayText, "Try Again.")
-                                    object : CountDownTimer(2000, 1000) {
-                                        override fun onTick(millisUntilFinished: Long) {}
-                                        override fun onFinish() {
-                                            emphasisText.visibility = VISIBLE
-                                            speechToText.visibility = VISIBLE
-                                            speechToText.startAnimation(fadeIn)
-                                            displayText.startAnimation(fadeIn)
-                                            emphasisText.startAnimation(fadeIn)
-                                            emphasisText.text = "A a"
-                                            display(displayText, "What letter is this?")
-                                        }
-                                    }.start()
-                                }
-                            }).initialize("", this@HomeActivity)
-                }
             }
         }.start()
     }
