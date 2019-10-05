@@ -106,6 +106,18 @@ class Response {
             "minor",
             "small")
 
+    val earlySiteWords = listOf(
+            "all", "am", "are", "at", "ate", "now", "on", "our", "out", "please",
+            "be", "black", "brown", "but", "came", "did", "do", "eat", "four",
+            "get", "good", "have", "he", "into", "like", "must", "new", "no",
+            "pretty", "ran", "ride", "saw", "say", "she", "so", "soon", "that",
+            "there", "they", "this", "too", "went", "what", "white", "who", "will",
+            "under", "want", "was", "well", "with", "yes", "a", "and", "away",
+            "big", "blue", "can", "come", "down", "find", "for", "funny", "go",
+            "help", "here", "I", "in", "is", "it", "jump", "little", "look",
+            "make", "me", "my", "not", "one", "play", "red", "run", "said",
+            "see", "the", "three", "to", "two", "up", "we", "where", "yellow", "you")
+
     fun encourage(): String{
         val randomAnswer = Random().nextInt(encourage.size) + 1
         return encourage[randomAnswer - 1]
@@ -116,5 +128,8 @@ class Response {
         return keepTrying[randomAnswer - 1]
     }
 
-
+    fun siteWords(): String{
+        val randomAnswer = Random().nextInt(earlySiteWords.size) + 1
+        return earlySiteWords[randomAnswer - 1]
+    }
 }

@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/EmphasisText"
+            android:id="@+id/emphasisText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -70,6 +70,18 @@
             android:inputType="textPassword"
             android:textColor="@color/colorAccent"
             android:textColorHint="@color/colorAccent"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/supportText"
+            android:layout_width="622dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/text_empty"
+            android:textColor="@color/colorAccent"
+            android:textSize="30sp"
+            android:textStyle="bold"
             android:visibility="gone" />
 
         <Button

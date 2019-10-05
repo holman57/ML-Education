@@ -12,6 +12,7 @@ import com.hiteshsahu.stt_tts.translation_engine.ConversionCallback
 import com.hiteshsahu.stt_tts.translation_engine.TranslatorFactory
 import android.os.CountDownTimer
 import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.VisibilityAwareImageButton
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.hiteshsahu.stt_tts.chatbot.Response
@@ -46,8 +47,11 @@ class HomeActivity : BasePermissionActivity() {
 
         val initText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.InitText)
         val displayText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.DisplayText)
-        val emphasisText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.EmphasisText)
+        val emphasisText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.emphasisText)
+        val supportText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.supportText)
         val speechToText = findViewById<FloatingActionButton>(com.hiteshsahu.stt_tts.R.id.speechToText)
+
+        supportText.textSize = 100.0F
 
         fadeIn.duration = 1200
         fadeIn.fillAfter = true
@@ -74,19 +78,19 @@ class HomeActivity : BasePermissionActivity() {
             helloButton.visibility = GONE
             initText.visibility = GONE
 
-            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
 
         }
     }
 
-    private fun controller(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+    private fun controller(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, supportText: TextView) {
 
         println(history.print())
         clearView(leftButton, centerButton, rightButton, emphasisText, displayText)
 
-        when (Random().nextInt(3) + 1) {
+        when (Random().nextInt(5) + 1) {
             1 -> {
-                alphabet(leftButton, centerButton, rightButton, emphasisText, displayText)
+                alphabet(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
             }
             2 -> {
                 var randomLetter = Random().nextInt(26) + 97
@@ -96,15 +100,21 @@ class HomeActivity : BasePermissionActivity() {
                     randomLetter = Random().nextInt(26) + 97
                     noRepeat += 1
                 }
-                thisIsTheLetter(2500, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, randomLetter)
+                thisIsTheLetter(2500, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, randomLetter, supportText)
             }
             3 -> {
-                arithmetic1_9(leftButton, centerButton, rightButton, emphasisText, displayText)
+                arithmetic1_9(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+            }
+            4 -> {
+                thisIsTheWord(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+            }
+            5 -> {
+                thisIsTheWord(5000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
             }
         }
     }
 
-    private fun arithmetic1_9(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+    private fun arithmetic1_9(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, supportText: TextView) {
         history.startCard("title","addition 1..9")
         history.add("type","arithmetic1_9")
 
@@ -175,7 +185,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     } else {
@@ -183,7 +193,7 @@ class HomeActivity : BasePermissionActivity() {
                         history.add("end time", "$endTime")
                         history.add("time", "${endTime - startTime}")
                         history.endCard()
-                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                     }
                 } else {
                     history.add("answered incorrectly", "true")
@@ -233,7 +243,7 @@ class HomeActivity : BasePermissionActivity() {
                             history.add("end time", "$endTime")
                             history.add("time", "${endTime - startTime}")
                             history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                         }
                     }.start()
                 } else {
@@ -255,11 +265,55 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
-                                        val endTime = Calendar.getInstance().timeInMillis
-                                        history.add("end time", "$endTime")
-                                        history.add("time", "${endTime - startTime}")
-                                        history.endCard()
-                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+
+
+                                        emphasisText.text = ""
+                                        val sb = StringBuilder()
+                                        for (i in 1..firstRandomDigit) {
+                                            sb.append("\u25CF")
+                                        }
+                                        sb.append(" + ")
+                                        for (i in 1..secondRandomDigit) {
+                                            sb.append("\u25CF")
+                                        }
+                                        emphasisText.text = sb.toString()
+                                        display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+
+
+
+                                        object : CountDownTimer(4000, 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {}
+                                            override fun onFinish() {
+                                                display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                                emphasisText.startAnimation(fadeIn)
+                                                supportText.visibility = VISIBLE
+                                                supportText.alpha = 1F
+                                                supportText.startAnimation(fadeIn)
+                                                sb.append(" =")
+                                                emphasisText.text = sb.toString()
+                                                val s = StringBuilder()
+                                                for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                    s.append("\u25CF")
+                                                }
+                                                supportText.text = s.toString()
+
+                                                object : CountDownTimer(8000, 1000) {
+                                                    override fun onTick(millisUntilFinished: Long) {}
+                                                    override fun onFinish() {
+                                                        supportText.visibility = GONE
+                                                        supportText.alpha = 0F
+                                                        val endTime = Calendar.getInstance().timeInMillis
+                                                        history.add("end time", "$endTime")
+                                                        history.add("time", "${endTime - startTime}")
+                                                        history.endCard()
+                                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                    }
+                                                }.start()
+                                            }
+                                        }.start()
+
+
                                     }
                                 }.start()
                             }
@@ -273,11 +327,53 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
-                                val endTime = Calendar.getInstance().timeInMillis
-                                history.add("end time", "$endTime")
-                                history.add("time", "${endTime - startTime}")
-                                history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+
+
+                                emphasisText.text = ""
+                                val sb = StringBuilder()
+                                for (i in 1..firstRandomDigit) {
+                                    sb.append("\u25CF")
+                                }
+                                sb.append(" + ")
+                                for (i in 1..secondRandomDigit) {
+                                    sb.append("\u25CF")
+                                }
+                                emphasisText.text = sb.toString()
+                                display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+
+
+
+                                object : CountDownTimer(4000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                        emphasisText.startAnimation(fadeIn)
+                                        supportText.visibility = VISIBLE
+                                        supportText.alpha = 1F
+                                        supportText.startAnimation(fadeIn)
+                                        sb.append(" =")
+                                        emphasisText.text = sb.toString()
+                                        val s = StringBuilder()
+                                        for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                            s.append("\u25CF")
+                                        }
+                                        supportText.text = s.toString()
+
+                                        object : CountDownTimer(8000, 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {}
+                                            override fun onFinish() {
+                                                supportText.visibility = GONE
+                                                supportText.alpha = 0F
+                                                val endTime = Calendar.getInstance().timeInMillis
+                                                history.add("end time", "$endTime")
+                                                history.add("time", "${endTime - startTime}")
+                                                history.endCard()
+                                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                            }
+                                        }.start()
+                                    }
+                                }.start()
                             }
                         }.start()
                     }
@@ -310,7 +406,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     } else {
@@ -318,7 +414,7 @@ class HomeActivity : BasePermissionActivity() {
                         history.add("end time", "$endTime")
                         history.add("time", "${endTime - startTime}")
                         history.endCard()
-                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                     }
                 } else {
                     history.add("answered incorrectly", "true")
@@ -368,7 +464,7 @@ class HomeActivity : BasePermissionActivity() {
                             history.add("end time", "$endTime")
                             history.add("time", "${endTime - startTime}")
                             history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                         }
                     }.start()
                 } else {
@@ -391,11 +487,53 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
-                                        val endTime = Calendar.getInstance().timeInMillis
-                                        history.add("end time", "$endTime")
-                                        history.add("time", "${endTime - startTime}")
-                                        history.endCard()
-                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+
+
+                                        emphasisText.text = ""
+                                        val sb = StringBuilder()
+                                        for (i in 1..firstRandomDigit) {
+                                            sb.append("\u25CF")
+                                        }
+                                        sb.append(" + ")
+                                        for (i in 1..secondRandomDigit) {
+                                            sb.append("\u25CF")
+                                        }
+                                        emphasisText.text = sb.toString()
+                                        display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+
+
+
+                                        object : CountDownTimer(4000, 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {}
+                                            override fun onFinish() {
+                                                display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                                emphasisText.startAnimation(fadeIn)
+                                                supportText.visibility = VISIBLE
+                                                supportText.alpha = 1F
+                                                supportText.startAnimation(fadeIn)
+                                                sb.append(" =")
+                                                emphasisText.text = sb.toString()
+                                                val s = StringBuilder()
+                                                for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                    s.append("\u25CF")
+                                                }
+                                                supportText.text = s.toString()
+
+                                                object : CountDownTimer(8000, 1000) {
+                                                    override fun onTick(millisUntilFinished: Long) {}
+                                                    override fun onFinish() {
+                                                        supportText.visibility = GONE
+                                                        supportText.alpha = 0F
+                                                        val endTime = Calendar.getInstance().timeInMillis
+                                                        history.add("end time", "$endTime")
+                                                        history.add("time", "${endTime - startTime}")
+                                                        history.endCard()
+                                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                    }
+                                                }.start()
+                                            }
+                                        }.start()
                                     }
                                 }.start()
                             }
@@ -409,11 +547,53 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
-                                val endTime = Calendar.getInstance().timeInMillis
-                                history.add("end time", "$endTime")
-                                history.add("time", "${endTime - startTime}")
-                                history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+
+
+                                emphasisText.text = ""
+                                val sb = StringBuilder()
+                                for (i in 1..firstRandomDigit) {
+                                    sb.append("\u25CF")
+                                }
+                                sb.append(" + ")
+                                for (i in 1..secondRandomDigit) {
+                                    sb.append("\u25CF")
+                                }
+                                emphasisText.text = sb.toString()
+                                display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+
+
+
+                                object : CountDownTimer(4000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                        emphasisText.startAnimation(fadeIn)
+                                        supportText.visibility = VISIBLE
+                                        supportText.alpha = 1F
+                                        supportText.startAnimation(fadeIn)
+                                        sb.append(" =")
+                                        emphasisText.text = sb.toString()
+                                        val s = StringBuilder()
+                                        for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                            s.append("\u25CF")
+                                        }
+                                        supportText.text = s.toString()
+
+                                        object : CountDownTimer(8000, 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {}
+                                            override fun onFinish() {
+                                                supportText.visibility = GONE
+                                                supportText.alpha = 0F
+                                                val endTime = Calendar.getInstance().timeInMillis
+                                                history.add("end time", "$endTime")
+                                                history.add("time", "${endTime - startTime}")
+                                                history.endCard()
+                                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                            }
+                                        }.start()
+                                    }
+                                }.start()
                             }
                         }.start()
                     }
@@ -446,7 +626,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     } else {
@@ -454,7 +634,7 @@ class HomeActivity : BasePermissionActivity() {
                         history.add("end time", "$endTime")
                         history.add("time", "${endTime - startTime}")
                         history.endCard()
-                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                     }
                 } else {
                     history.add("answered incorrectly", "true")
@@ -504,7 +684,7 @@ class HomeActivity : BasePermissionActivity() {
                             history.add("end time", "$endTime")
                             history.add("time", "${endTime - startTime}")
                             history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                         }
                     }.start()
                 } else {
@@ -527,11 +707,53 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
-                                        val endTime = Calendar.getInstance().timeInMillis
-                                        history.add("end time", "$endTime")
-                                        history.add("time", "${endTime - startTime}")
-                                        history.endCard()
-                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+
+
+                                        emphasisText.text = ""
+                                        val sb = StringBuilder()
+                                        for (i in 1..firstRandomDigit) {
+                                            sb.append("\u25CF")
+                                        }
+                                        sb.append(" + ")
+                                        for (i in 1..secondRandomDigit) {
+                                            sb.append("\u25CF")
+                                        }
+                                        emphasisText.text = sb.toString()
+                                        display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+
+
+
+                                        object : CountDownTimer(4000, 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {}
+                                            override fun onFinish() {
+                                                display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                                emphasisText.startAnimation(fadeIn)
+                                                supportText.visibility = VISIBLE
+                                                supportText.alpha = 1F
+                                                supportText.startAnimation(fadeIn)
+                                                sb.append(" =")
+                                                emphasisText.text = sb.toString()
+                                                val s = StringBuilder()
+                                                for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                    s.append("\u25CF")
+                                                }
+                                                supportText.text = s.toString()
+
+                                                object : CountDownTimer(8000, 1000) {
+                                                    override fun onTick(millisUntilFinished: Long) {}
+                                                    override fun onFinish() {
+                                                        supportText.visibility = GONE
+                                                        supportText.alpha = 0F
+                                                        val endTime = Calendar.getInstance().timeInMillis
+                                                        history.add("end time", "$endTime")
+                                                        history.add("time", "${endTime - startTime}")
+                                                        history.endCard()
+                                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                    }
+                                                }.start()
+                                            }
+                                        }.start()
                                     }
                                 }.start()
                             }
@@ -545,11 +767,53 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
-                                val endTime = Calendar.getInstance().timeInMillis
-                                history.add("end time", "$endTime")
-                                history.add("time", "${endTime - startTime}")
-                                history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+
+
+
+                                emphasisText.text = ""
+                                val sb = StringBuilder()
+                                for (i in 1..firstRandomDigit) {
+                                    sb.append("\u25CF")
+                                }
+                                sb.append(" + ")
+                                for (i in 1..secondRandomDigit) {
+                                    sb.append("\u25CF")
+                                }
+                                emphasisText.text = sb.toString()
+                                display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+
+
+
+                                object : CountDownTimer(4000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                        emphasisText.startAnimation(fadeIn)
+                                        supportText.visibility = VISIBLE
+                                        supportText.alpha = 1F
+                                        supportText.startAnimation(fadeIn)
+                                        sb.append(" =")
+                                        emphasisText.text = sb.toString()
+                                        val s = StringBuilder()
+                                        for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                            s.append("\u25CF")
+                                        }
+                                        supportText.text = s.toString()
+
+                                        object : CountDownTimer(8000, 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {}
+                                            override fun onFinish() {
+                                                supportText.visibility = GONE
+                                                supportText.alpha = 0F
+                                                val endTime = Calendar.getInstance().timeInMillis
+                                                history.add("end time", "$endTime")
+                                                history.add("time", "${endTime - startTime}")
+                                                history.endCard()
+                                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                            }
+                                        }.start()
+                                    }
+                                }.start()
                             }
                         }.start()
                     }
@@ -559,7 +823,7 @@ class HomeActivity : BasePermissionActivity() {
 
     }
 
-    private fun alphabet(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+    private fun alphabet(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, supportText: TextView) {
         history.startCard("title","alphabet sequence")
         history.add("type","language")
 
@@ -658,7 +922,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     } else {
@@ -666,7 +930,7 @@ class HomeActivity : BasePermissionActivity() {
                         history.add("end time", "$endTime")
                         history.add("time", "${endTime - startTime}")
                         history.endCard()
-                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                     }
                 } else {
                     history.add("answered incorrectly", "true")
@@ -715,7 +979,7 @@ class HomeActivity : BasePermissionActivity() {
                             history.add("end time", "$endTime")
                             history.add("time", "${endTime - startTime}")
                             history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                         }
                     }.start()
                 } else {
@@ -740,7 +1004,7 @@ class HomeActivity : BasePermissionActivity() {
                                         history.add("end time", "$endTime")
                                         history.add("time", "${endTime - startTime}")
                                         history.endCard()
-                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                                     }
                                 }.start()
                             }
@@ -757,7 +1021,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     }
@@ -790,7 +1054,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     } else {
@@ -798,7 +1062,7 @@ class HomeActivity : BasePermissionActivity() {
                         history.add("end time", "$endTime")
                         history.add("time", "${endTime - startTime}")
                         history.endCard()
-                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                     }
                 } else {
                     history.add("answered incorrectly", "true")
@@ -847,7 +1111,7 @@ class HomeActivity : BasePermissionActivity() {
                             history.add("end time", "$endTime")
                             history.add("time", "${endTime - startTime}")
                             history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                         }
                     }.start()
                 } else {
@@ -873,7 +1137,7 @@ class HomeActivity : BasePermissionActivity() {
                                         history.add("end time", "$endTime")
                                         history.add("time", "${endTime - startTime}")
                                         history.endCard()
-                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                                     }
                                 }.start()
                             }
@@ -890,7 +1154,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     }
@@ -923,7 +1187,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     } else {
@@ -931,7 +1195,7 @@ class HomeActivity : BasePermissionActivity() {
                         history.add("end time", "$endTime")
                         history.add("time", "${endTime - startTime}")
                         history.endCard()
-                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                     }
                 } else {
                     history.add("answered incorrectly", "true")
@@ -980,7 +1244,7 @@ class HomeActivity : BasePermissionActivity() {
                             history.add("end time", "$endTime")
                             history.add("time", "${endTime - startTime}")
                             history.endCard()
-                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                         }
                     }.start()
                 } else {
@@ -1006,7 +1270,7 @@ class HomeActivity : BasePermissionActivity() {
                                         history.add("end time", "$endTime")
                                         history.add("time", "${endTime - startTime}")
                                         history.endCard()
-                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                                     }
                                 }.start()
                             }
@@ -1023,7 +1287,7 @@ class HomeActivity : BasePermissionActivity() {
                                 history.add("end time", "$endTime")
                                 history.add("time", "${endTime - startTime}")
                                 history.endCard()
-                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
                             }
                         }.start()
                     }
@@ -1032,7 +1296,7 @@ class HomeActivity : BasePermissionActivity() {
         }
     }
 
-    private fun thisIsTheLetter(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, randomLetter: Int) {
+    private fun thisIsTheLetter(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, randomLetter: Int, supportText: TextView) {
         leftButton.alpha = 0.0F
         centerButton.alpha = 0.0F
         rightButton.alpha = 0.0F
@@ -1065,7 +1329,47 @@ class HomeActivity : BasePermissionActivity() {
                 emphasisText.startAnimation(fadeOut)
                 displayText.startAnimation(fadeOut)
                 history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+            }
+        }.start()
+    }
+
+    private fun thisIsTheWord(duration: Int, interval: Int, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, supportText: TextView) {
+        leftButton.alpha = 0.0F
+        centerButton.alpha = 0.0F
+        rightButton.alpha = 0.0F
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+
+        displayText.alpha = 1F
+        emphasisText.alpha = 1F
+
+        val word = response.siteWords()
+
+        history.startCard("title","site words early")
+        history.add("type","language")
+        history.add("time", "$duration")
+        history.add("word", word)
+
+        displayText.visibility = VISIBLE
+        emphasisText.visibility = VISIBLE
+
+        displayText.startAnimation(fadeIn)
+        displayText.text = "This is the word, " + word + "."
+        say("This is the word, " + word + ".")
+
+        emphasisText.startAnimation(fadeIn)
+        emphasisText.textSize = 90.0F
+        emphasisText.text = word
+
+        object : CountDownTimer(duration.toLong(), interval.toLong()) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                emphasisText.startAnimation(fadeOut)
+                displayText.startAnimation(fadeOut)
+                history.endCard()
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
             }
         }.start()
     }
