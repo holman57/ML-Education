@@ -11,11 +11,12 @@ import android.widget.Button
 import com.hiteshsahu.stt_tts.translation_engine.ConversionCallback
 import com.hiteshsahu.stt_tts.translation_engine.TranslatorFactory
 import android.os.CountDownTimer
-import android.support.constraint.solver.GoalRow
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import com.hiteshsahu.stt_tts.chatbot.Response
+import com.hiteshsahu.stt_tts.controller.Controller
 import com.hiteshsahu.stt_tts.data_structures.History
 
 
@@ -25,6 +26,8 @@ class HomeActivity : BasePermissionActivity() {
     private var fadeOut = AlphaAnimation(1.0f, 0.0f)
 
     private val history = History()
+    private val response = Response()
+    private val controller = Controller()
 
     override fun getActivityLayout(): Int {
         return com.hiteshsahu.stt_tts.R.layout.activity_home
@@ -99,7 +102,7 @@ class HomeActivity : BasePermissionActivity() {
                     noRepeat += 1
                 }
 
-                thisIsTheLetterTimeline(2500, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, randomLetter)
+                thisIsTheLetter(2500, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, randomLetter)
             }
             3 -> {
                 val firstRandomDigit = Random().nextInt(4) + 1
@@ -119,9 +122,8 @@ class HomeActivity : BasePermissionActivity() {
                     displayText.visibility = GONE
                 }
 
-                arithmetic(leftButton, centerButton, rightButton, emphasisText, displayText, firstRandomDigit, secondRandomDigit)
+                arithmetic1_9(leftButton, centerButton, rightButton, emphasisText, displayText, firstRandomDigit, secondRandomDigit)
             }
-
         }
     }
 
@@ -137,16 +139,38 @@ class HomeActivity : BasePermissionActivity() {
         rightButton.text = ""
         emphasisText.text = ""
         displayText.text = ""
+
+        leftButton.alpha = 0F
+        centerButton.alpha = 0F
+        rightButton.alpha = 0F
+        emphasisText.alpha = 0F
+        displayText.alpha = 0F
+    }
+
+    private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView) {
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+        emphasisText.visibility = GONE
+
+        emphasisText.text = ""
+
+        leftButton.alpha = 0F
+        centerButton.alpha = 0F
+        rightButton.alpha = 0F
+        emphasisText.alpha = 0F
     }
 
     @SuppressLint("SetTextI18n")
-    private fun arithmetic(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, firstRandomDigit: Int, secondRandomDigit: Int) {
+    private fun arithmetic1_9(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, firstRandomDigit: Int, secondRandomDigit: Int) {
         history.startCard("title","addition 1..9")
-        history.add("type","arithmetic")
+        history.add("type","arithmetic1_9")
 
         leftButton.alpha = 1F
         centerButton.alpha = 1F
         rightButton.alpha = 1F
+        emphasisText.alpha = 1F
+        displayText.alpha = 1F
 
         emphasisText.visibility = VISIBLE
         emphasisText.startAnimation(fadeIn)
@@ -214,59 +238,69 @@ class HomeActivity : BasePermissionActivity() {
         history.startCard("title","alphabet sequence")
         history.add("type","language")
 
-        leftButton.alpha = 1F
-        centerButton.alpha = 1F
-        rightButton.alpha = 1F
-
-        emphasisText.visibility = VISIBLE
-        emphasisText.textSize = 90.0F
-        emphasisText.startAnimation(fadeIn)
-
-        displayText.startAnimation(fadeIn)
-        displayText.visibility = VISIBLE
+        showButtonsEmphasisDisplayText(leftButton, centerButton, rightButton, emphasisText, displayText)
 
         val randomLetter = Random().nextInt(25) + 97
         var correctLetter = randomLetter
+        var questionPhrase = ""
+        var answerPhrase = ""
 
         history.add("starting letter","$randomLetter")
 
         when (randomLetter) {
             97 -> {
-                emphasisText.text = "__, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                questionPhrase = "__, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                answerPhrase = randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                emphasisText.text = questionPhrase
                 display(displayText, "What letter goes in the blank?")
             }
             98 -> {
-                emphasisText.text = (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                questionPhrase = (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                answerPhrase = (randomLetter - 1).toChar() + ", " + randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                emphasisText.text = questionPhrase
                 display(displayText, "What letter goes in the blank?")
             }
             99 -> {
-                emphasisText.text = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar()
+                questionPhrase = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar()
+                answerPhrase = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", " + randomLetter.toChar() + ", " + (randomLetter + 1).toChar()
+                emphasisText.text = questionPhrase
                 display(displayText, "What letter goes in the blank?")
             }
             in 100..118 -> {
-                emphasisText.text = randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar() + ", __ "
+                questionPhrase = randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar() + ", __ "
+                answerPhrase = randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar() + ", " + (randomLetter + 4).toChar()
+                emphasisText.text = questionPhrase
                 correctLetter = randomLetter + 4
                 display(displayText, "What letter comes next?")
             }
             119 -> {
-                emphasisText.text = "__, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                questionPhrase = "__, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                answerPhrase = randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar() + ", " + (randomLetter + 3).toChar()
+                emphasisText.text = questionPhrase
                 display(displayText, "What letter goes in the blank?")
             }
             120 -> {
-                emphasisText.text = (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                questionPhrase = (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                answerPhrase = (randomLetter - 1).toChar() + ", " + randomLetter.toChar() + ", " + (randomLetter + 1).toChar() + ", " + (randomLetter + 2).toChar()
+                emphasisText.text = questionPhrase
                 display(displayText, "What letter goes in the blank?")
             }
             121 -> {
-                emphasisText.text = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar()
+                questionPhrase = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __, " + (randomLetter + 1).toChar()
+                answerPhrase = (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", " + randomLetter.toChar() + ", " + (randomLetter + 1).toChar()
+                emphasisText.text = questionPhrase
                 display(displayText, "What letter goes in the blank?")
             }
             122 -> {
-                emphasisText.text = (randomLetter - 3).toChar() + ", " + (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __ "
+                questionPhrase = (randomLetter - 3).toChar() + ", " + (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", __ "
+                answerPhrase = (randomLetter - 3).toChar() + ", " + (randomLetter - 2).toChar() + ", " + (randomLetter - 1).toChar() + ", " + randomLetter.toChar()
+                emphasisText.text = questionPhrase
                 display(displayText, "What letter comes next?")
             }
         }
 
         val randomAnswer = Random().nextInt(3) + 1
+        var answeredQuestionWrong = false
         val leftButtonLetter: Int
         val centerButtonLetter: Int
         val rightButtonLetter: Int
@@ -276,14 +310,108 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleLetter(correctLetter)
         }
-        leftButton.visibility = VISIBLE
-        leftButton.startAnimation(fadeIn)
+        displayButton(leftButton)
         leftButton.text = leftButtonLetter.toChar().toString()
-        leftButton.textSize = 90.0F
         leftButton.setOnClickListener {
-            if (randomAnswer == 1) {
-                history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            if (!answeredQuestionWrong) {
+                if (randomAnswer == 1) {
+                    if (controller.shouldEncourage(history)) {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        showTextView(displayText)
+                        val encouragementPhrase = response.encourage()
+                        history.add("response", encouragementPhrase)
+                        display(displayText, encouragementPhrase)
+                        emphasisText.text = answerPhrase
+                        object : CountDownTimer(3000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    } else {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                    }
+                } else {
+                    if (controller.shouldTryAgain(history)) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showButtonsEmphasisDisplayText(rightButton, centerButton, emphasisText, displayText)
+                                emphasisText.text = questionPhrase
+                                say("What letter comes next?")
+                                rightButton.startAnimation(fadeIn)
+                                centerButton.startAnimation(fadeIn)
+                                leftButton.setOnClickListener {}
+                                history.add("wrong answer", questionPhrase.replace(",", ""))
+                                answeredQuestionWrong = true
+                            }
+                        }.start()
+                    } else {
+                        leftButton.startAnimation(fadeOut)
+                        leftButton.setOnClickListener {}
+                        history.add("wrong answer", questionPhrase.replace(",", ""))
+                        answeredQuestionWrong = true
+                    }
+                }
+            } else {
+                if (randomAnswer == 1) {
+                    hideButtons(leftButton, centerButton, rightButton)
+                    showTextView(displayText)
+                    val encouragementPhrase = response.encourage()
+                    history.add("response", encouragementPhrase)
+                    display(displayText, encouragementPhrase)
+                    emphasisText.text = answerPhrase
+                    object : CountDownTimer(3000, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {}
+                        override fun onFinish() {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        }
+                    }.start()
+                } else {
+                    if (controller.shouldTryAgain(history)) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showTextView(emphasisText)
+                                emphasisText.text = answerPhrase
+                                displayText.text = "This is the correct sequence of letters"
+                                say("This is the correct sequence of letters. " + answerPhrase)
+                                object : CountDownTimer(8000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        history.endCard()
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                    }
+                                }.start()
+                            }
+                        }.start()
+                    } else {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        emphasisText.text = answerPhrase
+                        displayText.text = "This is the correct sequence of letters"
+                        say("This is the correct sequence of letters. " + answerPhrase)
+                        object : CountDownTimer(8000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    }
+                }
             }
         }
 
@@ -292,14 +420,109 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleLetter(correctLetter, leftButtonLetter)
         }
-        centerButton.visibility = VISIBLE
-        centerButton.startAnimation(fadeIn)
+        displayButton(centerButton)
         centerButton.text = centerButtonLetter.toChar().toString()
-        centerButton.textSize = 90.0F
         centerButton.setOnClickListener {
-            if (randomAnswer == 2) {
-                history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            if (!answeredQuestionWrong) {
+                if (randomAnswer == 2) {
+                    if (controller.shouldEncourage(history)) {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        showTextView(displayText)
+                        val encouragementPhrase = response.encourage()
+                        history.add("response", encouragementPhrase)
+                        display(displayText, encouragementPhrase)
+                        emphasisText.text = answerPhrase
+                        object : CountDownTimer(3000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    } else {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                    }
+                } else {
+                    if (controller.shouldTryAgain(history)) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showButtonsEmphasisDisplayText(rightButton, leftButton, emphasisText, displayText)
+                                emphasisText.text = questionPhrase
+                                display(displayText, "What letter comes next?")
+                                rightButton.startAnimation(fadeIn)
+                                leftButton.startAnimation(fadeIn)
+                                centerButton.setOnClickListener {}
+                                history.add("wrong answer", questionPhrase.replace(",", ""))
+                                answeredQuestionWrong = true
+                            }
+                        }.start()
+                    } else {
+                        centerButton.startAnimation(fadeOut)
+                        centerButton.setOnClickListener {}
+                        history.add("wrong answer", questionPhrase.replace(",",""))
+                        answeredQuestionWrong = true
+                    }
+                }
+            } else {
+                if (randomAnswer == 2) {
+                    hideButtons(leftButton, centerButton, rightButton)
+                    showTextView(displayText)
+                    val encouragementPhrase = response.encourage()
+                    history.add("response", encouragementPhrase)
+                    display(displayText, encouragementPhrase)
+                    emphasisText.text = answerPhrase
+                    object : CountDownTimer(3000, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {}
+                        override fun onFinish() {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        }
+                    }.start()
+                } else {
+                    if (controller.shouldTryAgain(history)) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                hideButtons(leftButton, centerButton, rightButton)
+                                showTextView(emphasisText)
+                                emphasisText.text = answerPhrase
+                                displayText.text = "This is the correct sequence of letters"
+                                say("This is the correct sequence of letters. " + answerPhrase)
+                                object : CountDownTimer(8000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        history.endCard()
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                    }
+                                }.start()
+                            }
+                        }.start()
+                    } else {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        emphasisText.text = answerPhrase
+                        displayText.text = "This is the correct sequence of letters"
+                        say("This is the correct sequence of letters. " + answerPhrase)
+                        object : CountDownTimer(8000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    }
+                }
             }
         }
 
@@ -308,20 +531,181 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleLetter(correctLetter, leftButtonLetter, centerButtonLetter)
         }
-        rightButton.visibility = VISIBLE
-        rightButton.startAnimation(fadeIn)
+        displayButton(rightButton)
         rightButton.text = rightButtonLetter.toChar().toString()
-        rightButton.textSize = 90.0F
         rightButton.setOnClickListener {
-            if (randomAnswer == 3) {
-                history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            if (!answeredQuestionWrong) {
+                if (randomAnswer == 3) {
+                    if (controller.shouldEncourage(history)) {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        showTextView(displayText)
+                        val encouragementPhrase = response.encourage()
+                        history.add("response", encouragementPhrase)
+                        display(displayText, encouragementPhrase)
+                        emphasisText.text = answerPhrase
+                        object : CountDownTimer(3000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    } else {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                    }
+                } else {
+                    if (controller.shouldTryAgain(history)) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showButtonsEmphasisDisplayText(centerButton, leftButton, emphasisText, displayText)
+                                emphasisText.text = questionPhrase
+                                display(displayText, "What letter comes next?")
+                                centerButton.startAnimation(fadeIn)
+                                leftButton.startAnimation(fadeIn)
+                                rightButton.setOnClickListener {}
+                                history.add("wrong answer", questionPhrase.replace(",", ""))
+                                answeredQuestionWrong = true
+                            }
+                        }.start()
+                    } else {
+                        rightButton.startAnimation(fadeOut)
+                        rightButton.setOnClickListener {}
+                        history.add("wrong answer", questionPhrase.replace(",",""))
+                        answeredQuestionWrong = true
+                    }
+                }
+            } else {
+                if (randomAnswer == 3) {
+                    hideButtons(leftButton, centerButton, rightButton)
+                    showTextView(displayText)
+                    val encouragementPhrase = response.encourage()
+                    history.add("response", encouragementPhrase)
+                    display(displayText, encouragementPhrase)
+                    emphasisText.text = answerPhrase
+                    object : CountDownTimer(3000, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {}
+                        override fun onFinish() {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        }
+                    }.start()
+                } else {
+                    if (controller.shouldTryAgain(history)) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                hideButtons(leftButton, centerButton, rightButton)
+                                showTextView(emphasisText)
+                                emphasisText.text = answerPhrase
+                                displayText.text = "This is the correct sequence of letters"
+                                say("This is the correct sequence of letters. " + answerPhrase)
+                                object : CountDownTimer(8000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        history.endCard()
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                    }
+                                }.start()
+                            }
+                        }.start()
+                    } else {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        emphasisText.text = answerPhrase
+                        displayText.text = "This is the correct sequence of letters"
+                        say("This is the correct sequence of letters. " + answerPhrase)
+                        object : CountDownTimer(8000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    }
+                }
             }
         }
 
     }
 
-    private fun thisIsTheLetterTimeline(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, randomLetter: Int) {
+    private fun hideTextView(textView: TextView) {
+        textView.visibility = GONE
+        textView.text = ""
+        textView.alpha = 0F
+    }
+
+    private fun showButtonsEmphasisDisplayText(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        leftButton.alpha = 1F
+        centerButton.alpha = 1F
+        rightButton.alpha = 1F
+        leftButton.startAnimation(fadeIn)
+        centerButton.startAnimation(fadeIn)
+        rightButton.startAnimation(fadeIn)
+
+        emphasisText.alpha = 1F
+        emphasisText.textSize = 90.0F
+        emphasisText.visibility = VISIBLE
+        emphasisText.startAnimation(fadeIn)
+
+        displayText.alpha = 1F
+        displayText.visibility = VISIBLE
+        displayText.startAnimation(fadeIn)
+    }
+
+    private fun showButtonsEmphasisDisplayText(button1: Button, button2: Button, emphasisText: TextView, displayText: TextView) {
+        button1.alpha = 1F
+        button2.alpha = 1F
+
+        button1.visibility = VISIBLE
+        button2.visibility = VISIBLE
+
+        button1.startAnimation(fadeIn)
+        button2.startAnimation(fadeIn)
+
+        emphasisText.alpha = 1F
+        emphasisText.textSize = 90.0F
+        emphasisText.visibility = VISIBLE
+        emphasisText.startAnimation(fadeIn)
+
+        displayText.alpha = 1F
+        displayText.visibility = VISIBLE
+        displayText.startAnimation(fadeIn)
+    }
+
+    private fun displayButton(button: Button) {
+        button.visibility = VISIBLE
+        button.startAnimation(fadeIn)
+        button.textSize = 90.0F
+    }
+
+    private fun showTextView(text: TextView) {
+        text.visibility = VISIBLE
+        text.alpha = 1F
+        text.startAnimation(fadeIn)
+    }
+
+    private fun hideButtons(leftButton: Button, centerButton: Button, rightButton: Button) {
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+        leftButton.alpha = 0F
+        centerButton.alpha = 0F
+        rightButton.alpha = 0F
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun thisIsTheLetter(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, randomLetter: Int) {
         leftButton.alpha = 0.0F
         centerButton.alpha = 0.0F
         rightButton.alpha = 0.0F
@@ -329,26 +713,13 @@ class HomeActivity : BasePermissionActivity() {
         centerButton.visibility = GONE
         rightButton.visibility = GONE
 
+        displayText.alpha = 1F
+        emphasisText.alpha = 1F
+
         history.startCard("title","this is the letter")
         history.add("type","language")
         history.add("letter","$randomLetter")
 
-        thisIsTheLetter(displayText, emphasisText, randomLetter)
-
-        object : CountDownTimer(duration, interval) {
-            override fun onTick(millisUntilFinished: Long) {}
-            override fun onFinish() {
-                emphasisText.startAnimation(fadeOut)
-                displayText.startAnimation(fadeOut)
-                history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
-            }
-        }.start()
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun thisIsTheLetter(displayText: TextView, emphasisText: TextView, randomLetter: Int) {
         displayText.visibility = VISIBLE
         emphasisText.visibility = VISIBLE
 
@@ -359,6 +730,16 @@ class HomeActivity : BasePermissionActivity() {
         emphasisText.startAnimation(fadeIn)
         emphasisText.textSize = 90.0F
         emphasisText.text = randomLetter.toChar().toUpperCase() + " " + randomLetter.toChar()
+
+        object : CountDownTimer(duration, interval) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                emphasisText.startAnimation(fadeOut)
+                displayText.startAnimation(fadeOut)
+                history.endCard()
+                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            }
+        }.start()
     }
 
     private fun three_phase_failure(displayText: TextView, emphasisText: TextView, initText: TextView, helloButton: Button, speechToText: FloatingActionButton) {
@@ -425,6 +806,7 @@ class HomeActivity : BasePermissionActivity() {
     }
 
     private fun display(textView: TextView, stringToSpeak: String) {
+        textView.startAnimation(fadeIn)
         textView.text = stringToSpeak
         say(stringToSpeak)
     }

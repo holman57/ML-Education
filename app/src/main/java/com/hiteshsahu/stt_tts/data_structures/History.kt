@@ -18,6 +18,21 @@ class History {
         history.add(JSON)
     }
 
+    fun countLabels(label: String): Int {
+        var labelCount = 0
+        for (card in history) {
+            val attributes = card.split(",")
+            for (field in attributes) {
+                val fieldSplit = field.split(":")
+                val fieldLabel = fieldSplit[0].replace("\"", "").replace("{", "").replace("}", "")
+                if (fieldLabel == label) {
+                    labelCount += 1
+                }
+            }
+        }
+        return labelCount
+    }
+
     fun contain(label: String, value: String): Boolean {
         for (card in history) {
             val attributes = card.split(",")
