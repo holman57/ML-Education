@@ -18,11 +18,11 @@ import com.hiteshsahu.stt_tts.chatbot.Response
 import com.hiteshsahu.stt_tts.controller.Controller
 import com.hiteshsahu.stt_tts.data_structures.History
 
-
+@SuppressLint("SetTextI18n")
 class HomeActivity : BasePermissionActivity() {
 
-    private var fadeIn = AlphaAnimation(0.0f, 1.0f)
-    private var fadeOut = AlphaAnimation(1.0f, 0.0f)
+    private var fadeIn = AlphaAnimation(0.0F, 1.0F)
+    private var fadeOut = AlphaAnimation(1.0F, 0.0F)
 
     private val history = History()
     private val response = Response()
@@ -31,9 +31,7 @@ class HomeActivity : BasePermissionActivity() {
     override fun getActivityLayout(): Int {
         return com.hiteshsahu.stt_tts.R.layout.activity_home
     }
-
     override fun setUpView() {}
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -81,11 +79,9 @@ class HomeActivity : BasePermissionActivity() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun controller(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
 
         println(history.print())
-
         clearView(leftButton, centerButton, rightButton, emphasisText, displayText)
 
         when (Random().nextInt(3) + 1) {
@@ -100,7 +96,6 @@ class HomeActivity : BasePermissionActivity() {
                     randomLetter = Random().nextInt(26) + 97
                     noRepeat += 1
                 }
-
                 thisIsTheLetter(2500, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, randomLetter)
             }
             3 -> {
@@ -109,45 +104,12 @@ class HomeActivity : BasePermissionActivity() {
         }
     }
 
-    private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
-        leftButton.visibility = GONE
-        centerButton.visibility = GONE
-        rightButton.visibility = GONE
-        emphasisText.visibility = GONE
-        displayText.visibility = GONE
-
-        leftButton.text = ""
-        centerButton.text = ""
-        rightButton.text = ""
-        emphasisText.text = ""
-        displayText.text = ""
-
-        leftButton.alpha = 0F
-        centerButton.alpha = 0F
-        rightButton.alpha = 0F
-        emphasisText.alpha = 0F
-        displayText.alpha = 0F
-    }
-
-    private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView) {
-        leftButton.visibility = GONE
-        centerButton.visibility = GONE
-        rightButton.visibility = GONE
-        emphasisText.visibility = GONE
-
-        emphasisText.text = ""
-
-        leftButton.alpha = 0F
-        centerButton.alpha = 0F
-        rightButton.alpha = 0F
-        emphasisText.alpha = 0F
-    }
-
-    @SuppressLint("SetTextI18n")
     private fun arithmetic1_9(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
         history.startCard("title","addition 1..9")
         history.add("type","arithmetic1_9")
-        history.add("time", "${Calendar.getInstance().timeInMillis}")
+
+        val startTime = Calendar.getInstance().timeInMillis
+        history.add("start time", "$startTime")
 
         val firstRandomDigit = Random().nextInt(4) + 1
         val secondRandomDigit = Random().nextInt(4) + 1
@@ -209,11 +171,17 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
                         }.start()
                     } else {
+                        val endTime = Calendar.getInstance().timeInMillis
+                        history.add("end time", "$endTime")
+                        history.add("time", "${endTime - startTime}")
                         history.endCard()
                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
@@ -235,6 +203,9 @@ class HomeActivity : BasePermissionActivity() {
                                 rightButton.startAnimation(fadeIn)
                                 centerButton.startAnimation(fadeIn)
                                 leftButton.setOnClickListener {}
+                                leftButton.visibility = VISIBLE
+                                leftButton.alpha = 1F
+                                leftButton.startAnimation(fadeOut)
                                 history.add("wrong answer", questionPhrase.replace(",", ""))
                                 answeredQuestionWrong = true
                             }
@@ -258,6 +229,9 @@ class HomeActivity : BasePermissionActivity() {
                     object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
+                            val endTime = Calendar.getInstance().timeInMillis
+                            history.add("end time", "$endTime")
+                            history.add("time", "${endTime - startTime}")
                             history.endCard()
                             controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                         }
@@ -281,6 +255,9 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
+                                        val endTime = Calendar.getInstance().timeInMillis
+                                        history.add("end time", "$endTime")
+                                        history.add("time", "${endTime - startTime}")
                                         history.endCard()
                                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                                     }
@@ -296,6 +273,9 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
@@ -326,11 +306,17 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
                         }.start()
                     } else {
+                        val endTime = Calendar.getInstance().timeInMillis
+                        history.add("end time", "$endTime")
+                        history.add("time", "${endTime - startTime}")
                         history.endCard()
                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
@@ -352,6 +338,9 @@ class HomeActivity : BasePermissionActivity() {
                                 rightButton.startAnimation(fadeIn)
                                 leftButton.startAnimation(fadeIn)
                                 centerButton.setOnClickListener {}
+                                centerButton.visibility = VISIBLE
+                                centerButton.alpha = 1F
+                                centerButton.startAnimation(fadeOut)
                                 history.add("wrong answer", questionPhrase.replace(",", ""))
                                 answeredQuestionWrong = true
                             }
@@ -375,6 +364,9 @@ class HomeActivity : BasePermissionActivity() {
                     object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
+                            val endTime = Calendar.getInstance().timeInMillis
+                            history.add("end time", "$endTime")
+                            history.add("time", "${endTime - startTime}")
                             history.endCard()
                             controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                         }
@@ -399,6 +391,9 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
+                                        val endTime = Calendar.getInstance().timeInMillis
+                                        history.add("end time", "$endTime")
+                                        history.add("time", "${endTime - startTime}")
                                         history.endCard()
                                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                                     }
@@ -414,6 +409,9 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
@@ -444,11 +442,17 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
                         }.start()
                     } else {
+                        val endTime = Calendar.getInstance().timeInMillis
+                        history.add("end time", "$endTime")
+                        history.add("time", "${endTime - startTime}")
                         history.endCard()
                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
@@ -470,6 +474,9 @@ class HomeActivity : BasePermissionActivity() {
                                 centerButton.startAnimation(fadeIn)
                                 leftButton.startAnimation(fadeIn)
                                 rightButton.setOnClickListener {}
+                                rightButton.visibility = VISIBLE
+                                rightButton.alpha = 1F
+                                rightButton.startAnimation(fadeOut)
                                 history.add("wrong answer", questionPhrase.replace(",", ""))
                                 answeredQuestionWrong = true
                             }
@@ -493,6 +500,9 @@ class HomeActivity : BasePermissionActivity() {
                     object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
+                            val endTime = Calendar.getInstance().timeInMillis
+                            history.add("end time", "$endTime")
+                            history.add("time", "${endTime - startTime}")
                             history.endCard()
                             controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                         }
@@ -517,6 +527,9 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
+                                        val endTime = Calendar.getInstance().timeInMillis
+                                        history.add("end time", "$endTime")
+                                        history.add("time", "${endTime - startTime}")
                                         history.endCard()
                                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                                     }
@@ -532,6 +545,9 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
@@ -543,12 +559,12 @@ class HomeActivity : BasePermissionActivity() {
 
     }
 
-
-    @SuppressLint("SetTextI18n")
     private fun alphabet(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
         history.startCard("title","alphabet sequence")
         history.add("type","language")
-        history.add("time", "${Calendar.getInstance().timeInMillis}")
+
+        val startTime = Calendar.getInstance().timeInMillis
+        history.add("start time", "$startTime")
 
         showButtonsEmphasisDisplayText(leftButton, centerButton, rightButton, emphasisText, displayText)
 
@@ -638,11 +654,17 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
                         }.start()
                     } else {
+                        val endTime = Calendar.getInstance().timeInMillis
+                        history.add("end time", "$endTime")
+                        history.add("time", "${endTime - startTime}")
                         history.endCard()
                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
@@ -659,10 +681,13 @@ class HomeActivity : BasePermissionActivity() {
                             override fun onFinish() {
                                 showButtonsEmphasisDisplayText(rightButton, centerButton, emphasisText, displayText)
                                 emphasisText.text = questionPhrase
-                                say("What letter comes next?")
+                                display(displayText,"What letter comes next?")
                                 rightButton.startAnimation(fadeIn)
                                 centerButton.startAnimation(fadeIn)
                                 leftButton.setOnClickListener {}
+                                leftButton.visibility = VISIBLE
+                                leftButton.alpha = 1F
+                                leftButton.startAnimation(fadeOut)
                                 history.add("wrong answer", questionPhrase.replace(",", ""))
                                 answeredQuestionWrong = true
                             }
@@ -686,6 +711,9 @@ class HomeActivity : BasePermissionActivity() {
                     object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
+                            val endTime = Calendar.getInstance().timeInMillis
+                            history.add("end time", "$endTime")
+                            history.add("time", "${endTime - startTime}")
                             history.endCard()
                             controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                         }
@@ -708,6 +736,9 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(8000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
+                                        val endTime = Calendar.getInstance().timeInMillis
+                                        history.add("end time", "$endTime")
+                                        history.add("time", "${endTime - startTime}")
                                         history.endCard()
                                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                                     }
@@ -722,6 +753,9 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(8000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
@@ -752,11 +786,17 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
                         }.start()
                     } else {
+                        val endTime = Calendar.getInstance().timeInMillis
+                        history.add("end time", "$endTime")
+                        history.add("time", "${endTime - startTime}")
                         history.endCard()
                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
@@ -777,6 +817,9 @@ class HomeActivity : BasePermissionActivity() {
                                 rightButton.startAnimation(fadeIn)
                                 leftButton.startAnimation(fadeIn)
                                 centerButton.setOnClickListener {}
+                                centerButton.visibility = VISIBLE
+                                centerButton.alpha = 1F
+                                centerButton.startAnimation(fadeOut)
                                 history.add("wrong answer", questionPhrase.replace(",", ""))
                                 answeredQuestionWrong = true
                             }
@@ -800,6 +843,9 @@ class HomeActivity : BasePermissionActivity() {
                     object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
+                            val endTime = Calendar.getInstance().timeInMillis
+                            history.add("end time", "$endTime")
+                            history.add("time", "${endTime - startTime}")
                             history.endCard()
                             controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                         }
@@ -823,6 +869,9 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(8000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
+                                        val endTime = Calendar.getInstance().timeInMillis
+                                        history.add("end time", "$endTime")
+                                        history.add("time", "${endTime - startTime}")
                                         history.endCard()
                                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                                     }
@@ -837,6 +886,9 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(8000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
@@ -867,11 +919,17 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(2000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
                         }.start()
                     } else {
+                        val endTime = Calendar.getInstance().timeInMillis
+                        history.add("end time", "$endTime")
+                        history.add("time", "${endTime - startTime}")
                         history.endCard()
                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                     }
@@ -892,6 +950,9 @@ class HomeActivity : BasePermissionActivity() {
                                 centerButton.startAnimation(fadeIn)
                                 leftButton.startAnimation(fadeIn)
                                 rightButton.setOnClickListener {}
+                                rightButton.visibility = VISIBLE
+                                rightButton.alpha = 1F
+                                rightButton.startAnimation(fadeOut)
                                 history.add("wrong answer", questionPhrase.replace(",", ""))
                                 answeredQuestionWrong = true
                             }
@@ -915,6 +976,9 @@ class HomeActivity : BasePermissionActivity() {
                     object : CountDownTimer(2000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {
+                            val endTime = Calendar.getInstance().timeInMillis
+                            history.add("end time", "$endTime")
+                            history.add("time", "${endTime - startTime}")
                             history.endCard()
                             controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                         }
@@ -938,6 +1002,9 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(8000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
+                                        val endTime = Calendar.getInstance().timeInMillis
+                                        history.add("end time", "$endTime")
+                                        history.add("time", "${endTime - startTime}")
                                         history.endCard()
                                         controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                                     }
@@ -952,6 +1019,9 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(8000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
+                                val endTime = Calendar.getInstance().timeInMillis
+                                history.add("end time", "$endTime")
+                                history.add("time", "${endTime - startTime}")
                                 history.endCard()
                                 controller(leftButton, centerButton, rightButton, emphasisText, displayText)
                             }
@@ -962,72 +1032,6 @@ class HomeActivity : BasePermissionActivity() {
         }
     }
 
-    private fun hideTextView(textView: TextView) {
-        textView.visibility = GONE
-        textView.text = ""
-        textView.alpha = 0F
-    }
-
-    private fun showButtonsEmphasisDisplayText(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
-        leftButton.alpha = 1F
-        centerButton.alpha = 1F
-        rightButton.alpha = 1F
-        leftButton.startAnimation(fadeIn)
-        centerButton.startAnimation(fadeIn)
-        rightButton.startAnimation(fadeIn)
-
-        emphasisText.alpha = 1F
-        emphasisText.textSize = 90.0F
-        emphasisText.visibility = VISIBLE
-        emphasisText.startAnimation(fadeIn)
-
-        displayText.alpha = 1F
-        displayText.visibility = VISIBLE
-        displayText.startAnimation(fadeIn)
-    }
-
-    private fun showButtonsEmphasisDisplayText(button1: Button, button2: Button, emphasisText: TextView, displayText: TextView) {
-        button1.alpha = 1F
-        button2.alpha = 1F
-
-        button1.visibility = VISIBLE
-        button2.visibility = VISIBLE
-
-        button1.startAnimation(fadeIn)
-        button2.startAnimation(fadeIn)
-
-        emphasisText.alpha = 1F
-        emphasisText.textSize = 90.0F
-        emphasisText.visibility = VISIBLE
-        emphasisText.startAnimation(fadeIn)
-
-        displayText.alpha = 1F
-        displayText.visibility = VISIBLE
-        displayText.startAnimation(fadeIn)
-    }
-
-    private fun displayButton(button: Button) {
-        button.visibility = VISIBLE
-        button.startAnimation(fadeIn)
-        button.textSize = 90.0F
-    }
-
-    private fun showTextView(text: TextView) {
-        text.visibility = VISIBLE
-        text.alpha = 1F
-        text.startAnimation(fadeIn)
-    }
-
-    private fun hideButtons(leftButton: Button, centerButton: Button, rightButton: Button) {
-        leftButton.visibility = GONE
-        centerButton.visibility = GONE
-        rightButton.visibility = GONE
-        leftButton.alpha = 0F
-        centerButton.alpha = 0F
-        rightButton.alpha = 0F
-    }
-
-    @SuppressLint("SetTextI18n")
     private fun thisIsTheLetter(duration: Long, interval: Long, leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, randomLetter: Int) {
         leftButton.alpha = 0.0F
         centerButton.alpha = 0.0F
@@ -1041,7 +1045,7 @@ class HomeActivity : BasePermissionActivity() {
 
         history.startCard("title","this is the letter")
         history.add("type","language")
-        history.add("time", "${Calendar.getInstance().timeInMillis}")
+        history.add("time", "$duration")
         history.add("letter","${randomLetter.toChar()}")
 
         displayText.visibility = VISIBLE
@@ -1073,7 +1077,6 @@ class HomeActivity : BasePermissionActivity() {
         textView.text = stringToSpeak
         say(stringToSpeak)
     }
-
     private fun say(stringToSpeak: String) {
         if (stringToSpeak.isNotEmpty()) {
             TranslatorFactory
@@ -1089,7 +1092,6 @@ class HomeActivity : BasePermissionActivity() {
                     .initialize(stringToSpeak, this)
         }
     }
-
     private fun shuffleLetter(checkLetter: Int): Int {
         var randomLetter = Random().nextInt(26) + 97
         while(randomLetter == checkLetter) {
@@ -1097,7 +1099,6 @@ class HomeActivity : BasePermissionActivity() {
         }
         return randomLetter
     }
-
     private fun shuffleLetter(checkLetter1: Int, checkLetter2: Int): Int {
         var randomLetter = Random().nextInt(26) + 97
         while(randomLetter == checkLetter1 || randomLetter == checkLetter2) {
@@ -1105,7 +1106,6 @@ class HomeActivity : BasePermissionActivity() {
         }
         return randomLetter
     }
-
     private fun shuffleLetter(checkLetter1: Int, checkLetter2: Int, checkLetter3: Int): Int {
         var randomLetter = Random().nextInt(26) + 97
         while(randomLetter == checkLetter1 || randomLetter == checkLetter2 || randomLetter == checkLetter3) {
@@ -1113,7 +1113,6 @@ class HomeActivity : BasePermissionActivity() {
         }
         return randomLetter
     }
-
     private fun shuffleDigit(correctAnswer: Int): Int {
         var randomDigit = Random().nextInt(8) + 1
         while (correctAnswer == randomDigit) {
@@ -1121,7 +1120,6 @@ class HomeActivity : BasePermissionActivity() {
         }
         return randomDigit
     }
-
     private fun shuffleDigit(correctAnswer: Int, avoidDigit1: Int): Int {
         var randomDigit = Random().nextInt(8) + 1
         while (correctAnswer == randomDigit || avoidDigit1 == randomDigit) {
@@ -1129,7 +1127,6 @@ class HomeActivity : BasePermissionActivity() {
         }
         return randomDigit
     }
-
     private fun shuffleDigit(correctAnswer: Int, avoidDigit1: Int, avoidDigit2: Int): Int {
         var randomDigit = Random().nextInt(8) + 1
         while (correctAnswer == randomDigit || avoidDigit1 == randomDigit || avoidDigit2 == randomDigit) {
@@ -1137,5 +1134,98 @@ class HomeActivity : BasePermissionActivity() {
         }
         return randomDigit
     }
+    private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+        emphasisText.visibility = GONE
+        displayText.visibility = GONE
+
+        leftButton.text = ""
+        centerButton.text = ""
+        rightButton.text = ""
+        emphasisText.text = ""
+        displayText.text = ""
+
+        leftButton.alpha = 0F
+        centerButton.alpha = 0F
+        rightButton.alpha = 0F
+        emphasisText.alpha = 0F
+        displayText.alpha = 0F
+    }
+    private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView) {
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+        emphasisText.visibility = GONE
+
+        emphasisText.text = ""
+
+        leftButton.alpha = 0F
+        centerButton.alpha = 0F
+        rightButton.alpha = 0F
+        emphasisText.alpha = 0F
+    }
+    private fun hideTextView(textView: TextView) {
+        textView.visibility = GONE
+        textView.text = ""
+        textView.alpha = 0F
+    }
+    private fun showButtonsEmphasisDisplayText(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
+        leftButton.alpha = 1F
+        centerButton.alpha = 1F
+        rightButton.alpha = 1F
+        leftButton.startAnimation(fadeIn)
+        centerButton.startAnimation(fadeIn)
+        rightButton.startAnimation(fadeIn)
+
+        emphasisText.alpha = 1F
+        emphasisText.textSize = 90.0F
+        emphasisText.visibility = VISIBLE
+        emphasisText.startAnimation(fadeIn)
+
+        displayText.alpha = 1F
+        displayText.visibility = VISIBLE
+        displayText.startAnimation(fadeIn)
+    }
+    private fun showButtonsEmphasisDisplayText(button1: Button, button2: Button, emphasisText: TextView, displayText: TextView) {
+        button1.alpha = 1F
+        button2.alpha = 1F
+
+        button1.visibility = VISIBLE
+        button2.visibility = VISIBLE
+
+        button1.startAnimation(fadeIn)
+        button2.startAnimation(fadeIn)
+
+        emphasisText.alpha = 1F
+        emphasisText.textSize = 90.0F
+        emphasisText.visibility = VISIBLE
+        emphasisText.startAnimation(fadeIn)
+
+        displayText.alpha = 1F
+        displayText.visibility = VISIBLE
+        displayText.startAnimation(fadeIn)
+    }
+    private fun displayButton(button: Button) {
+        button.visibility = VISIBLE
+        button.startAnimation(fadeIn)
+        button.textSize = 90.0F
+    }
+    private fun showTextView(text: TextView) {
+        text.visibility = VISIBLE
+        text.alpha = 1F
+        text.startAnimation(fadeIn)
+    }
+    private fun hideButtons(leftButton: Button, centerButton: Button, rightButton: Button) {
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+        leftButton.alpha = 0F
+        centerButton.alpha = 0F
+        rightButton.alpha = 0F
+    }
+
+
 }
 
