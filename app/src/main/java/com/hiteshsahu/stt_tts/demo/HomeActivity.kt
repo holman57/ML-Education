@@ -104,24 +104,7 @@ class HomeActivity : BasePermissionActivity() {
                 thisIsTheLetter(2500, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, randomLetter)
             }
             3 -> {
-                val firstRandomDigit = Random().nextInt(4) + 1
-                val secondRandomDigit = Random().nextInt(4) + 1
-
-                emphasisText.text = "$firstRandomDigit + $secondRandomDigit ="
-
-                if (!history.contain("title","addition 1..9")) {
-                    say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
-                    displayText.text = "Can you evaluate this expression?"
-                    displayText.startAnimation(fadeIn)
-                    displayText.visibility = VISIBLE
-                }
-                else {
-                    say("$firstRandomDigit + $secondRandomDigit")
-                    displayText.text = ""
-                    displayText.visibility = GONE
-                }
-
-                arithmetic1_9(leftButton, centerButton, rightButton, emphasisText, displayText, firstRandomDigit, secondRandomDigit)
+                arithmetic1_9(leftButton, centerButton, rightButton, emphasisText, displayText)
             }
         }
     }
@@ -147,10 +130,10 @@ class HomeActivity : BasePermissionActivity() {
     }
 
     private fun clearView(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView) {
-        leftButton.startAnimation(fadeOut)
-        centerButton.startAnimation(fadeOut)
-        rightButton.startAnimation(fadeOut)
-        emphasisText.startAnimation(fadeOut)
+        leftButton.visibility = GONE
+        centerButton.visibility = GONE
+        rightButton.visibility = GONE
+        emphasisText.visibility = GONE
 
         emphasisText.text = ""
 
@@ -161,10 +144,30 @@ class HomeActivity : BasePermissionActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun arithmetic1_9(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, firstRandomDigit: Int, secondRandomDigit: Int) {
+    private fun arithmetic1_9(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView) {
         history.startCard("title","addition 1..9")
         history.add("type","arithmetic1_9")
         history.add("time", "${Calendar.getInstance().timeInMillis}")
+
+        val firstRandomDigit = Random().nextInt(4) + 1
+        val secondRandomDigit = Random().nextInt(4) + 1
+
+        val questionPhrase = "$firstRandomDigit + $secondRandomDigit ="
+        val answerPhrase = "$firstRandomDigit + $secondRandomDigit = ${(firstRandomDigit + secondRandomDigit)}"
+
+        emphasisText.text = questionPhrase
+
+        if (!history.contain("title","addition 1..9")) {
+            say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
+            displayText.text = "Can you evaluate this expression?"
+            displayText.startAnimation(fadeIn)
+            displayText.visibility = VISIBLE
+        }
+        else {
+            say("$firstRandomDigit + $secondRandomDigit")
+            displayText.text = ""
+            displayText.visibility = GONE
+        }
 
         leftButton.alpha = 1F
         centerButton.alpha = 1F
@@ -182,20 +185,123 @@ class HomeActivity : BasePermissionActivity() {
         val leftButtonLabel: Int
         val centerButtonLabel: Int
         val rightButtonLabel: Int
+        var answeredQuestionWrong = false
+
 
         leftButtonLabel = if (randomAnswer == 1) {
             correctAnswer
         } else {
             shuffleDigit(correctAnswer)
         }
-        leftButton.visibility = VISIBLE
-        leftButton.startAnimation(fadeIn)
+        displayButton(leftButton)
         leftButton.text = leftButtonLabel.toString()
-        leftButton.textSize = 90.0F
         leftButton.setOnClickListener {
-            if (randomAnswer == 1) {
-                history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            if (!answeredQuestionWrong) {
+                if (randomAnswer == 1) {
+                    history.add("answered correctly", "true")
+                    if (controller.shouldEncourage(history, "addition 1..9")) {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        showTextView(displayText)
+                        val encouragementPhrase = response.encourage()
+                        history.add("response", encouragementPhrase)
+                        display(displayText, encouragementPhrase)
+                        emphasisText.text = answerPhrase
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    } else {
+                        history.endCard()
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                    }
+                } else {
+                    history.add("answered incorrectly", "true")
+                    if (controller.shouldTryAgain(history, "addition 1..9")) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showButtonsEmphasisDisplayText(rightButton, centerButton, emphasisText, displayText)
+                                emphasisText.text = questionPhrase
+                                say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
+                                displayText.text = "Can you evaluate this expression?"
+                                rightButton.startAnimation(fadeIn)
+                                centerButton.startAnimation(fadeIn)
+                                leftButton.setOnClickListener {}
+                                history.add("wrong answer", questionPhrase.replace(",", ""))
+                                answeredQuestionWrong = true
+                            }
+                        }.start()
+                    } else {
+                        leftButton.startAnimation(fadeOut)
+                        leftButton.setOnClickListener {}
+                        history.add("wrong answer", questionPhrase.replace(",", ""))
+                        answeredQuestionWrong = true
+                    }
+                }
+            } else {
+                if (randomAnswer == 1) {
+                    history.add("answered correctly", "true")
+                    hideButtons(leftButton, centerButton, rightButton)
+                    showTextView(displayText)
+                    val encouragementPhrase = response.encourage()
+                    history.add("response", encouragementPhrase)
+                    display(displayText, encouragementPhrase)
+                    emphasisText.text = answerPhrase
+                    object : CountDownTimer(2000, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {}
+                        override fun onFinish() {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        }
+                    }.start()
+                } else {
+                    history.add("answered correctly", "false")
+                    if (controller.shouldTryAgain(history, "addition 1..9")) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showTextView(emphasisText)
+                                emphasisText.text = answerPhrase
+                                showTextView(displayText)
+                                displayText.text = "$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit"
+                                say("$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit")
+                                object : CountDownTimer(5000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        history.endCard()
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                    }
+                                }.start()
+                            }
+                        }.start()
+                    } else {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        emphasisText.text = answerPhrase
+                        showTextView(displayText)
+                        displayText.text = "$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit"
+                        say("$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit")
+                        object : CountDownTimer(5000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    }
+                }
             }
         }
 
@@ -204,14 +310,116 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleDigit(correctAnswer, leftButtonLabel)
         }
-        centerButton.visibility = VISIBLE
-        centerButton.startAnimation(fadeIn)
+        displayButton(centerButton)
         centerButton.text = centerButtonLabel.toString()
-        centerButton.textSize = 90.0F
         centerButton.setOnClickListener {
-            if (randomAnswer == 2) {
-                history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            if (!answeredQuestionWrong) {
+                if (randomAnswer == 2) {
+                    history.add("answered correctly", "true")
+                    if (controller.shouldEncourage(history, "addition 1..9")) {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        showTextView(displayText)
+                        val encouragementPhrase = response.encourage()
+                        history.add("response", encouragementPhrase)
+                        display(displayText, encouragementPhrase)
+                        emphasisText.text = answerPhrase
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    } else {
+                        history.endCard()
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                    }
+                } else {
+                    history.add("answered incorrectly", "true")
+                    if (controller.shouldTryAgain(history, "addition 1..9")) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showButtonsEmphasisDisplayText(rightButton, leftButton, emphasisText, displayText)
+                                emphasisText.text = questionPhrase
+                                say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
+                                displayText.text = "Can you evaluate this expression?"
+                                rightButton.startAnimation(fadeIn)
+                                leftButton.startAnimation(fadeIn)
+                                centerButton.setOnClickListener {}
+                                history.add("wrong answer", questionPhrase.replace(",", ""))
+                                answeredQuestionWrong = true
+                            }
+                        }.start()
+                    } else {
+                        centerButton.startAnimation(fadeOut)
+                        centerButton.setOnClickListener {}
+                        history.add("wrong answer", questionPhrase.replace(",",""))
+                        answeredQuestionWrong = true
+                    }
+                }
+            } else {
+                if (randomAnswer == 2) {
+                    history.add("answered correctly", "true")
+                    hideButtons(leftButton, centerButton, rightButton)
+                    showTextView(displayText)
+                    val encouragementPhrase = response.encourage()
+                    history.add("response", encouragementPhrase)
+                    display(displayText, encouragementPhrase)
+                    emphasisText.text = answerPhrase
+                    object : CountDownTimer(2000, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {}
+                        override fun onFinish() {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        }
+                    }.start()
+                } else {
+                    history.add("answered correctly", "false")
+                    if (controller.shouldTryAgain(history, "addition 1..9")) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                hideButtons(leftButton, centerButton, rightButton)
+                                showTextView(emphasisText)
+                                emphasisText.text = answerPhrase
+                                showTextView(displayText)
+                                displayText.text = "$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit"
+                                say("$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit")
+                                object : CountDownTimer(5000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        history.endCard()
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                    }
+                                }.start()
+                            }
+                        }.start()
+                    } else {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        emphasisText.text = answerPhrase
+                        showTextView(displayText)
+                        displayText.text = "$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit"
+                        say("$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit")
+                        object : CountDownTimer(5000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    }
+                }
             }
         }
 
@@ -220,16 +428,119 @@ class HomeActivity : BasePermissionActivity() {
         } else {
             shuffleDigit(correctAnswer, leftButtonLabel, centerButtonLabel)
         }
-        rightButton.visibility = VISIBLE
-        rightButton.startAnimation(fadeIn)
+        displayButton(rightButton)
         rightButton.text = rightButtonLabel.toString()
-        rightButton.textSize = 90.0F
         rightButton.setOnClickListener {
-            if (randomAnswer == 3) {
-                history.endCard()
-                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+            if (!answeredQuestionWrong) {
+                if (randomAnswer == 3) {
+                    history.add("answered correctly", "true")
+                    if (controller.shouldEncourage(history, "addition 1..9")) {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        showTextView(displayText)
+                        val encouragementPhrase = response.encourage()
+                        history.add("response", encouragementPhrase)
+                        display(displayText, encouragementPhrase)
+                        emphasisText.text = answerPhrase
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    } else {
+                        history.endCard()
+                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                    }
+                } else {
+                    history.add("answered incorrectly", "true")
+                    if (controller.shouldTryAgain(history, "addition 1..9")) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                showButtonsEmphasisDisplayText(centerButton, leftButton, emphasisText, displayText)
+                                emphasisText.text = questionPhrase
+                                say("Can you evaluate this expression? $firstRandomDigit + $secondRandomDigit")
+                                displayText.text = "Can you evaluate this expression?"
+                                centerButton.startAnimation(fadeIn)
+                                leftButton.startAnimation(fadeIn)
+                                rightButton.setOnClickListener {}
+                                history.add("wrong answer", questionPhrase.replace(",", ""))
+                                answeredQuestionWrong = true
+                            }
+                        }.start()
+                    } else {
+                        rightButton.startAnimation(fadeOut)
+                        rightButton.setOnClickListener {}
+                        history.add("wrong answer", questionPhrase.replace(",",""))
+                        answeredQuestionWrong = true
+                    }
+                }
+            } else {
+                if (randomAnswer == 3) {
+                    history.add("answered correctly", "true")
+                    hideButtons(leftButton, centerButton, rightButton)
+                    showTextView(displayText)
+                    val encouragementPhrase = response.encourage()
+                    history.add("response", encouragementPhrase)
+                    display(displayText, encouragementPhrase)
+                    emphasisText.text = answerPhrase
+                    object : CountDownTimer(2000, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {}
+                        override fun onFinish() {
+                            history.endCard()
+                            controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                        }
+                    }.start()
+                } else {
+                    history.add("answered correctly", "false")
+                    if (controller.shouldTryAgain(history, "addition 1..9")) {
+                        clearView(leftButton, centerButton, rightButton, emphasisText)
+                        displayText.startAnimation(fadeIn)
+                        val keepTryingPhrase = response.keepTrying()
+                        display(displayText, keepTryingPhrase)
+                        history.add("response", keepTryingPhrase)
+                        object : CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                hideButtons(leftButton, centerButton, rightButton)
+                                showTextView(emphasisText)
+                                emphasisText.text = answerPhrase
+                                showTextView(displayText)
+                                displayText.text = "$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit"
+                                say("$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit")
+                                object : CountDownTimer(5000, 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        history.endCard()
+                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                                    }
+                                }.start()
+                            }
+                        }.start()
+                    } else {
+                        hideButtons(leftButton, centerButton, rightButton)
+                        emphasisText.text = answerPhrase
+                        showTextView(displayText)
+                        displayText.text = "$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit"
+                        say("$correctAnswer is the result of $firstRandomDigit + $secondRandomDigit")
+                        object : CountDownTimer(5000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {}
+                            override fun onFinish() {
+                                history.endCard()
+                                controller(leftButton, centerButton, rightButton, emphasisText, displayText)
+                            }
+                        }.start()
+                    }
+                }
             }
         }
+
     }
 
 
@@ -756,6 +1067,8 @@ class HomeActivity : BasePermissionActivity() {
     }
 
     private fun display(textView: TextView, stringToSpeak: String) {
+        textView.visibility = VISIBLE
+        textView.alpha = 1F
         textView.startAnimation(fadeIn)
         textView.text = stringToSpeak
         say(stringToSpeak)
