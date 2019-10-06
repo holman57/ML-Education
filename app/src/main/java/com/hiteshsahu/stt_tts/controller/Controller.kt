@@ -10,5 +10,9 @@ class Controller {
         return Math.random() < 0.5
     }
 
+    fun shouldExplain(history: History, title: String): Boolean {
+        return Math.random() < 0.5
+    }
+
 
 }

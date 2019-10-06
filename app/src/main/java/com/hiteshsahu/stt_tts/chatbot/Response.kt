@@ -74,7 +74,7 @@ class Response {
             "Try again.",
             "Give it another shot.",
             "Try that again.",
-            "One more time, that was incorrect.",
+            "One more time. That was incorrect.",
             "Wrong. Try that again.",
             "Wrong. Try again.",
             "Incorrect. Try again.",

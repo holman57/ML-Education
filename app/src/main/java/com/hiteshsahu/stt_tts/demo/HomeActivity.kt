@@ -106,10 +106,10 @@ class HomeActivity : BasePermissionActivity() {
                 arithmetic1_9(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
             }
             4 -> {
-                thisIsTheWord(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                thisIsTheWord(3000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
             }
             5 -> {
-                thisIsTheWord(5000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                thisIsTheWord(4000, 1000, leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
             }
         }
     }
@@ -265,55 +265,56 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
-
-
-
-                                        emphasisText.text = ""
-                                        val sb = StringBuilder()
-                                        for (i in 1..firstRandomDigit) {
-                                            sb.append("\u25CF")
-                                        }
-                                        sb.append(" + ")
-                                        for (i in 1..secondRandomDigit) {
-                                            sb.append("\u25CF")
-                                        }
-                                        emphasisText.text = sb.toString()
-                                        display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
-
-
-
-                                        object : CountDownTimer(4000, 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {}
-                                            override fun onFinish() {
-                                                display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
-                                                emphasisText.startAnimation(fadeIn)
-                                                supportText.visibility = VISIBLE
-                                                supportText.alpha = 1F
-                                                supportText.startAnimation(fadeIn)
-                                                sb.append(" =")
-                                                emphasisText.text = sb.toString()
-                                                val s = StringBuilder()
-                                                for (i in 1..(firstRandomDigit + secondRandomDigit)) {
-                                                    s.append("\u25CF")
-                                                }
-                                                supportText.text = s.toString()
-
-                                                object : CountDownTimer(8000, 1000) {
-                                                    override fun onTick(millisUntilFinished: Long) {}
-                                                    override fun onFinish() {
-                                                        supportText.visibility = GONE
-                                                        supportText.alpha = 0F
-                                                        val endTime = Calendar.getInstance().timeInMillis
-                                                        history.add("end time", "$endTime")
-                                                        history.add("time", "${endTime - startTime}")
-                                                        history.endCard()
-                                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
-                                                    }
-                                                }.start()
+                                        if (controller.shouldExplain(history, "addition 1..9")) {
+                                            emphasisText.text = ""
+                                            val sb = StringBuilder()
+                                            for (i in 1..firstRandomDigit) {
+                                                sb.append("\u25CF")
                                             }
-                                        }.start()
-
-
+                                            sb.append(" + ")
+                                            for (i in 1..secondRandomDigit) {
+                                                sb.append("\u25CF")
+                                            }
+                                            emphasisText.text = sb.toString()
+                                            display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+                                            object : CountDownTimer(5000, 1000) {
+                                                override fun onTick(millisUntilFinished: Long) {}
+                                                override fun onFinish() {
+                                                    display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                                    emphasisText.startAnimation(fadeIn)
+                                                    supportText.visibility = VISIBLE
+                                                    supportText.alpha = 1F
+                                                    supportText.startAnimation(fadeIn)
+                                                    sb.append(" =")
+                                                    emphasisText.text = sb.toString()
+                                                    val s = StringBuilder()
+                                                    for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                        s.append("\u25CF")
+                                                    }
+                                                    supportText.text = s.toString()
+                                                    object : CountDownTimer(9000, 1000) {
+                                                        override fun onTick(millisUntilFinished: Long) {}
+                                                        override fun onFinish() {
+                                                            supportText.visibility = GONE
+                                                            supportText.alpha = 0F
+                                                            val endTime = Calendar.getInstance().timeInMillis
+                                                            history.add("end time", "$endTime")
+                                                            history.add("time", "${endTime - startTime}")
+                                                            history.endCard()
+                                                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                        }
+                                                    }.start()
+                                                }
+                                            }.start()
+                                        } else {
+                                            supportText.visibility = GONE
+                                            supportText.alpha = 0F
+                                            val endTime = Calendar.getInstance().timeInMillis
+                                            history.add("end time", "$endTime")
+                                            history.add("time", "${endTime - startTime}")
+                                            history.endCard()
+                                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                        }
                                     }
                                 }.start()
                             }
@@ -327,53 +328,56 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
-
-
-
-                                emphasisText.text = ""
-                                val sb = StringBuilder()
-                                for (i in 1..firstRandomDigit) {
-                                    sb.append("\u25CF")
-                                }
-                                sb.append(" + ")
-                                for (i in 1..secondRandomDigit) {
-                                    sb.append("\u25CF")
-                                }
-                                emphasisText.text = sb.toString()
-                                display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
-
-
-
-                                object : CountDownTimer(4000, 1000) {
-                                    override fun onTick(millisUntilFinished: Long) {}
-                                    override fun onFinish() {
-                                        display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
-                                        emphasisText.startAnimation(fadeIn)
-                                        supportText.visibility = VISIBLE
-                                        supportText.alpha = 1F
-                                        supportText.startAnimation(fadeIn)
-                                        sb.append(" =")
-                                        emphasisText.text = sb.toString()
-                                        val s = StringBuilder()
-                                        for (i in 1..(firstRandomDigit + secondRandomDigit)) {
-                                            s.append("\u25CF")
-                                        }
-                                        supportText.text = s.toString()
-
-                                        object : CountDownTimer(8000, 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {}
-                                            override fun onFinish() {
-                                                supportText.visibility = GONE
-                                                supportText.alpha = 0F
-                                                val endTime = Calendar.getInstance().timeInMillis
-                                                history.add("end time", "$endTime")
-                                                history.add("time", "${endTime - startTime}")
-                                                history.endCard()
-                                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
-                                            }
-                                        }.start()
+                                if (controller.shouldExplain(history, "addition 1..9")) {
+                                    emphasisText.text = ""
+                                    val sb = StringBuilder()
+                                    for (i in 1..firstRandomDigit) {
+                                        sb.append("\u25CF")
                                     }
-                                }.start()
+                                    sb.append(" + ")
+                                    for (i in 1..secondRandomDigit) {
+                                        sb.append("\u25CF")
+                                    }
+                                    emphasisText.text = sb.toString()
+                                    display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+                                    object : CountDownTimer(5000, 1000) {
+                                        override fun onTick(millisUntilFinished: Long) {}
+                                        override fun onFinish() {
+                                            display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                            emphasisText.startAnimation(fadeIn)
+                                            supportText.visibility = VISIBLE
+                                            supportText.alpha = 1F
+                                            supportText.startAnimation(fadeIn)
+                                            sb.append(" =")
+                                            emphasisText.text = sb.toString()
+                                            val s = StringBuilder()
+                                            for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                s.append("\u25CF")
+                                            }
+                                            supportText.text = s.toString()
+                                            object : CountDownTimer(9000, 1000) {
+                                                override fun onTick(millisUntilFinished: Long) {}
+                                                override fun onFinish() {
+                                                    supportText.visibility = GONE
+                                                    supportText.alpha = 0F
+                                                    val endTime = Calendar.getInstance().timeInMillis
+                                                    history.add("end time", "$endTime")
+                                                    history.add("time", "${endTime - startTime}")
+                                                    history.endCard()
+                                                    controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                }
+                                            }.start()
+                                        }
+                                    }.start()
+                                } else {
+                                    supportText.visibility = GONE
+                                    supportText.alpha = 0F
+                                    val endTime = Calendar.getInstance().timeInMillis
+                                    history.add("end time", "$endTime")
+                                    history.add("time", "${endTime - startTime}")
+                                    history.endCard()
+                                    controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                }
                             }
                         }.start()
                     }
@@ -487,53 +491,56 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
-
-
-
-                                        emphasisText.text = ""
-                                        val sb = StringBuilder()
-                                        for (i in 1..firstRandomDigit) {
-                                            sb.append("\u25CF")
-                                        }
-                                        sb.append(" + ")
-                                        for (i in 1..secondRandomDigit) {
-                                            sb.append("\u25CF")
-                                        }
-                                        emphasisText.text = sb.toString()
-                                        display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
-
-
-
-                                        object : CountDownTimer(4000, 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {}
-                                            override fun onFinish() {
-                                                display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
-                                                emphasisText.startAnimation(fadeIn)
-                                                supportText.visibility = VISIBLE
-                                                supportText.alpha = 1F
-                                                supportText.startAnimation(fadeIn)
-                                                sb.append(" =")
-                                                emphasisText.text = sb.toString()
-                                                val s = StringBuilder()
-                                                for (i in 1..(firstRandomDigit + secondRandomDigit)) {
-                                                    s.append("\u25CF")
-                                                }
-                                                supportText.text = s.toString()
-
-                                                object : CountDownTimer(8000, 1000) {
-                                                    override fun onTick(millisUntilFinished: Long) {}
-                                                    override fun onFinish() {
-                                                        supportText.visibility = GONE
-                                                        supportText.alpha = 0F
-                                                        val endTime = Calendar.getInstance().timeInMillis
-                                                        history.add("end time", "$endTime")
-                                                        history.add("time", "${endTime - startTime}")
-                                                        history.endCard()
-                                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
-                                                    }
-                                                }.start()
+                                        if (controller.shouldExplain(history, "addition 1..9")) {
+                                            emphasisText.text = ""
+                                            val sb = StringBuilder()
+                                            for (i in 1..firstRandomDigit) {
+                                                sb.append("\u25CF")
                                             }
-                                        }.start()
+                                            sb.append(" + ")
+                                            for (i in 1..secondRandomDigit) {
+                                                sb.append("\u25CF")
+                                            }
+                                            emphasisText.text = sb.toString()
+                                            display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+                                            object : CountDownTimer(5000, 1000) {
+                                                override fun onTick(millisUntilFinished: Long) {}
+                                                override fun onFinish() {
+                                                    display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                                    emphasisText.startAnimation(fadeIn)
+                                                    supportText.visibility = VISIBLE
+                                                    supportText.alpha = 1F
+                                                    supportText.startAnimation(fadeIn)
+                                                    sb.append(" =")
+                                                    emphasisText.text = sb.toString()
+                                                    val s = StringBuilder()
+                                                    for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                        s.append("\u25CF")
+                                                    }
+                                                    supportText.text = s.toString()
+                                                    object : CountDownTimer(9000, 1000) {
+                                                        override fun onTick(millisUntilFinished: Long) {}
+                                                        override fun onFinish() {
+                                                            supportText.visibility = GONE
+                                                            supportText.alpha = 0F
+                                                            val endTime = Calendar.getInstance().timeInMillis
+                                                            history.add("end time", "$endTime")
+                                                            history.add("time", "${endTime - startTime}")
+                                                            history.endCard()
+                                                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                        }
+                                                    }.start()
+                                                }
+                                            }.start()
+                                        } else {
+                                            supportText.visibility = GONE
+                                            supportText.alpha = 0F
+                                            val endTime = Calendar.getInstance().timeInMillis
+                                            history.add("end time", "$endTime")
+                                            history.add("time", "${endTime - startTime}")
+                                            history.endCard()
+                                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                        }
                                     }
                                 }.start()
                             }
@@ -547,53 +554,56 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
-
-
-
-                                emphasisText.text = ""
-                                val sb = StringBuilder()
-                                for (i in 1..firstRandomDigit) {
-                                    sb.append("\u25CF")
-                                }
-                                sb.append(" + ")
-                                for (i in 1..secondRandomDigit) {
-                                    sb.append("\u25CF")
-                                }
-                                emphasisText.text = sb.toString()
-                                display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
-
-
-
-                                object : CountDownTimer(4000, 1000) {
-                                    override fun onTick(millisUntilFinished: Long) {}
-                                    override fun onFinish() {
-                                        display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
-                                        emphasisText.startAnimation(fadeIn)
-                                        supportText.visibility = VISIBLE
-                                        supportText.alpha = 1F
-                                        supportText.startAnimation(fadeIn)
-                                        sb.append(" =")
-                                        emphasisText.text = sb.toString()
-                                        val s = StringBuilder()
-                                        for (i in 1..(firstRandomDigit + secondRandomDigit)) {
-                                            s.append("\u25CF")
-                                        }
-                                        supportText.text = s.toString()
-
-                                        object : CountDownTimer(8000, 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {}
-                                            override fun onFinish() {
-                                                supportText.visibility = GONE
-                                                supportText.alpha = 0F
-                                                val endTime = Calendar.getInstance().timeInMillis
-                                                history.add("end time", "$endTime")
-                                                history.add("time", "${endTime - startTime}")
-                                                history.endCard()
-                                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
-                                            }
-                                        }.start()
+                                if (controller.shouldExplain(history, "addition 1..9")) {
+                                    emphasisText.text = ""
+                                    val sb = StringBuilder()
+                                    for (i in 1..firstRandomDigit) {
+                                        sb.append("\u25CF")
                                     }
-                                }.start()
+                                    sb.append(" + ")
+                                    for (i in 1..secondRandomDigit) {
+                                        sb.append("\u25CF")
+                                    }
+                                    emphasisText.text = sb.toString()
+                                    display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+                                    object : CountDownTimer(5000, 1000) {
+                                        override fun onTick(millisUntilFinished: Long) {}
+                                        override fun onFinish() {
+                                            display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                            emphasisText.startAnimation(fadeIn)
+                                            supportText.visibility = VISIBLE
+                                            supportText.alpha = 1F
+                                            supportText.startAnimation(fadeIn)
+                                            sb.append(" =")
+                                            emphasisText.text = sb.toString()
+                                            val s = StringBuilder()
+                                            for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                s.append("\u25CF")
+                                            }
+                                            supportText.text = s.toString()
+                                            object : CountDownTimer(9000, 1000) {
+                                                override fun onTick(millisUntilFinished: Long) {}
+                                                override fun onFinish() {
+                                                    supportText.visibility = GONE
+                                                    supportText.alpha = 0F
+                                                    val endTime = Calendar.getInstance().timeInMillis
+                                                    history.add("end time", "$endTime")
+                                                    history.add("time", "${endTime - startTime}")
+                                                    history.endCard()
+                                                    controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                }
+                                            }.start()
+                                        }
+                                    }.start()
+                                } else {
+                                    supportText.visibility = GONE
+                                    supportText.alpha = 0F
+                                    val endTime = Calendar.getInstance().timeInMillis
+                                    history.add("end time", "$endTime")
+                                    history.add("time", "${endTime - startTime}")
+                                    history.endCard()
+                                    controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                }
                             }
                         }.start()
                     }
@@ -707,53 +717,57 @@ class HomeActivity : BasePermissionActivity() {
                                 object : CountDownTimer(5000, 1000) {
                                     override fun onTick(millisUntilFinished: Long) {}
                                     override fun onFinish() {
-
-
-
-                                        emphasisText.text = ""
-                                        val sb = StringBuilder()
-                                        for (i in 1..firstRandomDigit) {
-                                            sb.append("\u25CF")
-                                        }
-                                        sb.append(" + ")
-                                        for (i in 1..secondRandomDigit) {
-                                            sb.append("\u25CF")
-                                        }
-                                        emphasisText.text = sb.toString()
-                                        display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
-
-
-
-                                        object : CountDownTimer(4000, 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {}
-                                            override fun onFinish() {
-                                                display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
-                                                emphasisText.startAnimation(fadeIn)
-                                                supportText.visibility = VISIBLE
-                                                supportText.alpha = 1F
-                                                supportText.startAnimation(fadeIn)
-                                                sb.append(" =")
-                                                emphasisText.text = sb.toString()
-                                                val s = StringBuilder()
-                                                for (i in 1..(firstRandomDigit + secondRandomDigit)) {
-                                                    s.append("\u25CF")
-                                                }
-                                                supportText.text = s.toString()
-
-                                                object : CountDownTimer(8000, 1000) {
-                                                    override fun onTick(millisUntilFinished: Long) {}
-                                                    override fun onFinish() {
-                                                        supportText.visibility = GONE
-                                                        supportText.alpha = 0F
-                                                        val endTime = Calendar.getInstance().timeInMillis
-                                                        history.add("end time", "$endTime")
-                                                        history.add("time", "${endTime - startTime}")
-                                                        history.endCard()
-                                                        controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
-                                                    }
-                                                }.start()
+                                        if (controller.shouldExplain(history, "addition 1..9")) {
+                                            emphasisText.text = ""
+                                            val sb = StringBuilder()
+                                            for (i in 1..firstRandomDigit) {
+                                                sb.append("\u25CF")
                                             }
-                                        }.start()
+                                            sb.append(" + ")
+                                            for (i in 1..secondRandomDigit) {
+                                                sb.append("\u25CF")
+                                            }
+                                            emphasisText.text = sb.toString()
+                                            display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+                                            object : CountDownTimer(5000, 1000) {
+                                                override fun onTick(millisUntilFinished: Long) {}
+                                                override fun onFinish() {
+                                                    display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                                    emphasisText.startAnimation(fadeIn)
+                                                    supportText.visibility = VISIBLE
+                                                    supportText.alpha = 1F
+                                                    supportText.startAnimation(fadeIn)
+                                                    sb.append(" =")
+                                                    emphasisText.text = sb.toString()
+                                                    val s = StringBuilder()
+                                                    for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                        s.append("\u25CF")
+                                                    }
+                                                    supportText.text = s.toString()
+
+                                                    object : CountDownTimer(9000, 1000) {
+                                                        override fun onTick(millisUntilFinished: Long) {}
+                                                        override fun onFinish() {
+                                                            supportText.visibility = GONE
+                                                            supportText.alpha = 0F
+                                                            val endTime = Calendar.getInstance().timeInMillis
+                                                            history.add("end time", "$endTime")
+                                                            history.add("time", "${endTime - startTime}")
+                                                            history.endCard()
+                                                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                        }
+                                                    }.start()
+                                                }
+                                            }.start()
+                                        } else {
+                                            supportText.visibility = GONE
+                                            supportText.alpha = 0F
+                                            val endTime = Calendar.getInstance().timeInMillis
+                                            history.add("end time", "$endTime")
+                                            history.add("time", "${endTime - startTime}")
+                                            history.endCard()
+                                            controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                        }
                                     }
                                 }.start()
                             }
@@ -767,53 +781,56 @@ class HomeActivity : BasePermissionActivity() {
                         object : CountDownTimer(5000, 1000) {
                             override fun onTick(millisUntilFinished: Long) {}
                             override fun onFinish() {
-
-
-
-                                emphasisText.text = ""
-                                val sb = StringBuilder()
-                                for (i in 1..firstRandomDigit) {
-                                    sb.append("\u25CF")
-                                }
-                                sb.append(" + ")
-                                for (i in 1..secondRandomDigit) {
-                                    sb.append("\u25CF")
-                                }
-                                emphasisText.text = sb.toString()
-                                display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
-
-
-
-                                object : CountDownTimer(4000, 1000) {
-                                    override fun onTick(millisUntilFinished: Long) {}
-                                    override fun onFinish() {
-                                        display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
-                                        emphasisText.startAnimation(fadeIn)
-                                        supportText.visibility = VISIBLE
-                                        supportText.alpha = 1F
-                                        supportText.startAnimation(fadeIn)
-                                        sb.append(" =")
-                                        emphasisText.text = sb.toString()
-                                        val s = StringBuilder()
-                                        for (i in 1..(firstRandomDigit + secondRandomDigit)) {
-                                            s.append("\u25CF")
-                                        }
-                                        supportText.text = s.toString()
-
-                                        object : CountDownTimer(8000, 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {}
-                                            override fun onFinish() {
-                                                supportText.visibility = GONE
-                                                supportText.alpha = 0F
-                                                val endTime = Calendar.getInstance().timeInMillis
-                                                history.add("end time", "$endTime")
-                                                history.add("time", "${endTime - startTime}")
-                                                history.endCard()
-                                                controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
-                                            }
-                                        }.start()
+                                if (controller.shouldExplain(history, "addition 1..9")) {
+                                    emphasisText.text = ""
+                                    val sb = StringBuilder()
+                                    for (i in 1..firstRandomDigit) {
+                                        sb.append("\u25CF")
                                     }
-                                }.start()
+                                    sb.append(" + ")
+                                    for (i in 1..secondRandomDigit) {
+                                        sb.append("\u25CF")
+                                    }
+                                    emphasisText.text = sb.toString()
+                                    display(displayText,"The addition of the quantity " + firstRandomDigit + " and " + secondRandomDigit)
+                                    object : CountDownTimer(5000, 1000) {
+                                        override fun onTick(millisUntilFinished: Long) {}
+                                        override fun onFinish() {
+                                            display(displayText,"is the sum of " + (firstRandomDigit + secondRandomDigit) + " individual 1's")
+                                            emphasisText.startAnimation(fadeIn)
+                                            supportText.visibility = VISIBLE
+                                            supportText.alpha = 1F
+                                            supportText.startAnimation(fadeIn)
+                                            sb.append(" =")
+                                            emphasisText.text = sb.toString()
+                                            val s = StringBuilder()
+                                            for (i in 1..(firstRandomDigit + secondRandomDigit)) {
+                                                s.append("\u25CF")
+                                            }
+                                            supportText.text = s.toString()
+                                            object : CountDownTimer(9000, 1000) {
+                                                override fun onTick(millisUntilFinished: Long) {}
+                                                override fun onFinish() {
+                                                    supportText.visibility = GONE
+                                                    supportText.alpha = 0F
+                                                    val endTime = Calendar.getInstance().timeInMillis
+                                                    history.add("end time", "$endTime")
+                                                    history.add("time", "${endTime - startTime}")
+                                                    history.endCard()
+                                                    controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                                }
+                                            }.start()
+                                        }
+                                    }.start()
+                                } else {
+                                    supportText.visibility = GONE
+                                    supportText.alpha = 0F
+                                    val endTime = Calendar.getInstance().timeInMillis
+                                    history.add("end time", "$endTime")
+                                    history.add("time", "${endTime - startTime}")
+                                    history.endCard()
+                                    controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
+                                }
                             }
                         }.start()
                     }
