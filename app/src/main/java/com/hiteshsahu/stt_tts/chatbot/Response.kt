@@ -115,8 +115,15 @@ class Response {
             "under", "want", "was", "well", "with", "yes", "a", "and", "away",
             "big", "blue", "can", "come", "down", "find", "for", "funny", "go",
             "help", "here", "I", "in", "is", "it", "jump", "little", "look",
-            "make", "me", "my", "not", "one", "play", "red", "run", "said",
-            "see", "the", "three", "to", "two", "up", "we", "where", "yellow", "you")
+            "make", "me", "my", "not", "one", "play", "red", "run", "said", "which",
+            "see", "the", "three", "to", "two", "up", "we", "where", "yellow", "you",
+            "of", "us", "most", "day", "these", "any", "because", "even", "way",
+            "first", "work", "how", "use", "after", "back", "also", "think", "over",
+            "its", "only", "then", "than", "other", "them", "could", "some",
+            "your", "year", "people", "take", "know", "him", "just", "time", "when",
+            "about", "if", "their", "would", "an", "or", "her", "from", "by", "his",
+            "at", "as"
+    )
 
     fun encourage(): String{
         val randomAnswer = Random().nextInt(encourage.size) + 1
