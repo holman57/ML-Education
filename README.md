@@ -60,3 +60,20 @@ Gradient Background
 
 Animated Gradient Background in Android :-  http://www.androidtutorialshub.com/animated-gradient-background-in-android/
 
+---
+
+# Research
+
+Curriculum for Reinforcement Learning
+- https://lilianweng.github.io/lil-log/2020/01/29/curriculum-for-reinforcement-learning.html
+
+      @article{weng2020curriculum,
+        title   = "Curriculum for Reinforcement Learning",
+        author  = "Weng, Lilian",
+        journal = "lilianweng.github.io/lil-log",
+        year    = "2020",
+        url     = "https://lilianweng.github.io/lil-log/2020/01/29/curriculum-for-reinforcement-learning.html"
+      }
+
+Learning Curriculum Policies for Reinforcement Learning
+- https://arxiv.org/abs/1812.00285
