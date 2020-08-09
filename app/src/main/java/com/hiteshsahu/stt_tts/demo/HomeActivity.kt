@@ -76,7 +76,6 @@ class HomeActivity : BasePermissionActivity() {
             initText.visibility = GONE
 
             controller(leftButton, centerButton, rightButton, emphasisText, displayText, supportText)
-
         }
     }
 
@@ -155,7 +154,6 @@ class HomeActivity : BasePermissionActivity() {
         val centerButtonLabel: Int
         val rightButtonLabel: Int
         var answeredQuestionWrong = false
-
 
         leftButtonLabel = if (randomAnswer == 1) {
             correctAnswer
@@ -834,7 +832,6 @@ class HomeActivity : BasePermissionActivity() {
                 }
             }
         }
-
     }
 
     private fun alphabet(leftButton: Button, centerButton: Button, rightButton: Button, emphasisText: TextView, displayText: TextView, supportText: TextView) {
@@ -1543,7 +1540,6 @@ class HomeActivity : BasePermissionActivity() {
         centerButton.alpha = 0F
         rightButton.alpha = 0F
     }
-
 
 }
 
