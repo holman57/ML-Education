@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ML-Education.iml" filepath="$PROJECT_DIR$/.idea/modules/ML-Education.iml" group="ML-Education" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/ML-Education-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/ML-Education-app.iml" group="ML-Education/app" />
       <module fileurl="file://$PROJECT_DIR$/MLeducation.iml" filepath="$PROJECT_DIR$/MLeducation.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

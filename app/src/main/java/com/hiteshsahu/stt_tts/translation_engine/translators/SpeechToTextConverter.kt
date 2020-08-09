@@ -76,8 +76,10 @@ class SpeechToTextConverter(private val conversionCallback: ConversionCallback) 
         override fun onResults(results: Bundle) {
             var translateResults = String()
             val data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-            for ( result in  data) {
-                translateResults += result + "\n"
+            if (data != null) {
+                for (result in data) {
+                    translateResults += result + "\n"
+                }
             }
             conversionCallback.onSuccess(translateResults)
         }

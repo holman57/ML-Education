@@ -5,16 +5,15 @@ import java.util.*
 import android.view.animation.AlphaAnimation
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.widget.TextView
 import android.widget.Button
 import com.hiteshsahu.stt_tts.translation_engine.ConversionCallback
 import com.hiteshsahu.stt_tts.translation_engine.TranslatorFactory
 import android.os.CountDownTimer
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.VisibilityAwareImageButton
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.hiteshsahu.stt_tts.chatbot.Response
 import com.hiteshsahu.stt_tts.controller.Controller
 import com.hiteshsahu.stt_tts.data_structures.History
@@ -49,7 +48,7 @@ class HomeActivity : BasePermissionActivity() {
         val displayText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.DisplayText)
         val emphasisText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.emphasisText)
         val supportText = findViewById<TextView>(com.hiteshsahu.stt_tts.R.id.supportText)
-        val speechToText = findViewById<FloatingActionButton>(com.hiteshsahu.stt_tts.R.id.speechToText)
+//        val speechToText = findViewById<FloatingActionButton>(com.hiteshsahu.stt_tts.R.id.speechToText)
 
         supportText.textSize = 100.0F
 
